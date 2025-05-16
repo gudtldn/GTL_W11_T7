@@ -63,7 +63,7 @@ void FProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) 
 
 void FNumericProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -142,7 +142,7 @@ void FDoubleProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
 void FBoolProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -158,7 +158,7 @@ void FBoolProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataP
 
 void FStrProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -202,7 +202,7 @@ void FNameProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataP
 
 void FVector2DProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -218,7 +218,7 @@ void FVector2DProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* D
 
 void FVectorProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -234,7 +234,7 @@ void FVectorProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
 void FVector4Property::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -250,7 +250,7 @@ void FVector4Property::DisplayRawDataInImGui(const char* PropertyLabel, void* Da
 
 void FRotatorProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -266,7 +266,7 @@ void FRotatorProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Da
 
 void FQuatProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -286,7 +286,7 @@ void FTransformProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* 
 
     if (ImGui::TreeNode(PropertyLabel))
     {
-        ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+        ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
         {
             FTransform* Data = static_cast<FTransform*>(DataPtr);
             FRotator Rotation = Data->Rotator();
@@ -312,7 +312,7 @@ void FMatrixProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
         bool bChanged = false;
         FMatrix* Data = static_cast<FMatrix*>(DataPtr);
 
-        ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+        ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
         {
             FTransform Transform = FTransform(*Data);
             FRotator Rotation = Transform.Rotator();
@@ -333,7 +333,7 @@ void FMatrixProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
         if (ImGui::TreeNode("Advanced"))
         {
-            ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+            ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
                 ImGui::DragFloat4("##1", Data->M[0], 0.01f, -FLT_MAX, FLT_MAX, "%.3f");
                 ImGui::DragFloat4("##2", Data->M[1], 0.01f, -FLT_MAX, FLT_MAX, "%.3f");
@@ -350,7 +350,7 @@ void FMatrixProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
 void FColorProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -380,7 +380,7 @@ void FColorProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Data
 
 void FLinearColorProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -406,7 +406,7 @@ void FLinearColorProperty::DisplayRawDataInImGui(const char* PropertyLabel, void
 
 void FSubclassOfProperty::DisplayInImGui(UObject* Object) const
 {
-    ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+    ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
     {
         FProperty::DisplayInImGui(Object);
     }
@@ -465,7 +465,7 @@ void FObjectBaseProperty::DisplayRawDataInImGui(const char* PropertyLabel, void*
         if (const UClass* ObjectClass = IsValid(*Object) ? (*Object)->GetClass() : nullptr)
         {
             // 포인터가 가리키는것을 수정할 때, 보통 UObject의 인스턴스
-            if (HasFlag(Flags, EPropertyFlags::EditAnywhere))
+            if (HasAnyFlags(Flags, EPropertyFlags::EditAnywhere))
             {
                 TArray<UObject*> ChildObjects;
                 GetObjectsOfClass(ObjectClass, ChildObjects, true);
@@ -490,7 +490,7 @@ void FObjectBaseProperty::DisplayRawDataInImGui(const char* PropertyLabel, void*
                     ImGui::EndCombo();
                 }
             }
-            else if (HasFlag(Flags, EPropertyFlags::VisibleAnywhere))
+            else if (HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere))
             {
                 for (const FProperty* Prop : ObjectClass->GetProperties())
                 {

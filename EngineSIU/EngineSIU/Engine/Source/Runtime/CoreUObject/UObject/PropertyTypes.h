@@ -178,17 +178,6 @@ constexpr bool HasAnyFlags(EPropertyFlags FlagToCheck)
     return HasAnyFlags(Flags, FlagToCheck);
 }
 
-constexpr bool HasFlag(EPropertyFlags Flags, EPropertyFlags FlagToCheck)
-{
-    return HasAllFlags(Flags, FlagToCheck);
-}
-
-template <EPropertyFlags Flags>
-constexpr bool HasFlag(EPropertyFlags FlagToCheck)
-{
-    return HasFlag(Flags, FlagToCheck);
-}
-
 // 특정 플래그만 제외하는 연산자
 constexpr EPropertyFlags operator~(EPropertyFlags Flags)
 {
