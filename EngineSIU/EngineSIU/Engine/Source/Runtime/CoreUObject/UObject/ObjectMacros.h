@@ -74,7 +74,7 @@ public: \
         { \
             constexpr int64 Offset = offsetof(ThisClass, InVarName); \
             constexpr EPropertyFlags Flags = InFlags; \
-            ThisClass::StaticClass()->RegisterProperty( \
+            ThisClass::StaticClass()->AddProperty( \
                 PropertyFactory::Private::MakeProperty<InType, Flags>(ThisClass::StaticClass(), #InVarName, Offset) \
             ); \
         } \

@@ -25,9 +25,17 @@ public:
     UStruct(UStruct&&) = delete;
     UStruct& operator=(UStruct&&) = delete;
 
+    using Super = UObject;
+    using ThisClass = UStruct;
+
 public:
-    [[nodiscard]] uint32 GetStructSize() const { return StructSize; }
-    [[nodiscard]] uint32 GetStructAlignment() const { return StructAlignment; }
+    /** 현재 구조체의 Property 총 크기를 반환합니다. */
+    [[nodiscard]] uint32 GetPropertiesSize() const { return PropertiesSize; }
+
+    /** 현재 구조체의 최소 메모리 정렬 크기를 반환합니다. */
+    [[nodiscard]] uint32 GetMinAlignment() const { return MinAlignment; }
+
+    /** 부모의 UStruct를 가져옵니다. */
     [[nodiscard]] UStruct* GetSuperStruct() const { return SuperStruct; }
 
     /** SomeBase의 자식 Struct인지 확인합니다. */
@@ -64,8 +72,8 @@ private:
     static TArray<FProperty*>& GetUnresolvedProperties();
 
 protected:
-    uint32 StructSize;
-    uint32 StructAlignment;
+    uint32 PropertiesSize;
+    uint32 MinAlignment;
     UStruct* SuperStruct;
 
     // 이 Struct/Class에 직접 정의된 프로퍼티들
