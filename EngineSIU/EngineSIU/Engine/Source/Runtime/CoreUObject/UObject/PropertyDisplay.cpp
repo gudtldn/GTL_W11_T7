@@ -470,7 +470,7 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
                 TArray<UObject*> ChildObjects;
                 GetObjectsOfClass(ObjectClass, ChildObjects, true);
 
-                if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), ObjectClass->GetName().ToAnsiString().c_str()))
+                if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), (*Object)->GetName().ToAnsiString().c_str()))
                 {
                     for (const UObject* ChildObject : ChildObjects)
                     {
