@@ -464,7 +464,7 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
         if (const UClass* ObjectClass = IsValid(*Object) ? (*Object)->GetClass() : nullptr)
         {
-            // 포인터가 가리키는것을 수정할 때, 보통 UObject의 인스턴스
+            // 포인터가 가리키는 객체를 수정, 여기서는 UObject의 인스턴스
             if (HasAnyFlags(Flags, EPropertyFlags::EditAnywhere))
             {
                 TArray<UObject*> ChildObjects;
@@ -472,7 +472,7 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
                 if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), ObjectClass->GetName().ToAnsiString().c_str()))
                 {
-                    for (UObject* ChildObject : ChildObjects)
+                    for (const UObject* ChildObject : ChildObjects)
                     {
                         const std::string ObjectName = ChildObject->GetName().ToAnsiString();
                         const bool bIsSelected = ChildObject == *Object;
