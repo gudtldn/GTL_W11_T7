@@ -756,7 +756,7 @@ struct TMapProperty : public FProperty
 
                     if (bIsOpen)
                     {
-                        constexpr std::string_view KeyTypeNameView = GetTypeName<KeyType>();
+                        constexpr std::string_view KeyTypeNameView = GetTypeNameString<KeyType>();
                         std::string KeyTypeName = std::string(KeyTypeNameView);
                         if (ImGui::TreeNode(std::format("Key ({})", KeyTypeName).c_str()))
                         {
@@ -765,7 +765,7 @@ struct TMapProperty : public FProperty
                             ImGui::TreePop();
                         }
 
-                        constexpr std::string_view ValueTypeNameView = GetTypeName<ValueType>();
+                        constexpr std::string_view ValueTypeNameView = GetTypeNameString<ValueType>();
                         std::string ValueTypeName = std::string(ValueTypeNameView);
                         if (ImGui::TreeNode(std::format("Value ({})", ValueTypeName).c_str()))
                         {
@@ -1166,7 +1166,7 @@ FProperty* MakeProperty(
     }
     else if constexpr (TypeEnum == EPropertyType::UnresolvedPointer)
     {
-        constexpr std::string_view TypeName = GetTypeName<T>();
+        constexpr std::string_view TypeName = GetTypeNameString<T>();
         FProperty* Property = new FUnresolvedPtrProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
         Property->TypeSpecificData = FName(TypeName.data(), TypeName.size());
         return Property;
