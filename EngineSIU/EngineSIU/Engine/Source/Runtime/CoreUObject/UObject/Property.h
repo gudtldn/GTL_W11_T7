@@ -40,10 +40,10 @@ struct FProperty
     }
 
     virtual ~FProperty() = default;
-    FProperty(const FProperty&) = default;
-    FProperty& operator=(const FProperty&) = default;
-    FProperty(FProperty&&) = default;
-    FProperty& operator=(FProperty&&) = default;
+    FProperty(const FProperty&) = delete;
+    FProperty& operator=(const FProperty&) = delete;
+    FProperty(FProperty&&) = delete;
+    FProperty& operator=(FProperty&&) = delete;
 
 public:
     /** ImGui에 각 프로퍼티에 맞는 UI를 띄웁니다. */
@@ -1051,10 +1051,10 @@ struct FUnresolvedPtrProperty : public FProperty
         delete ResolvedProperty;
     }
 
-    FUnresolvedPtrProperty(const FUnresolvedPtrProperty&) = default;
-    FUnresolvedPtrProperty& operator=(const FUnresolvedPtrProperty&) = default;
-    FUnresolvedPtrProperty(FUnresolvedPtrProperty&&) = default;
-    FUnresolvedPtrProperty& operator=(FUnresolvedPtrProperty&&) = default;
+    FUnresolvedPtrProperty(const FUnresolvedPtrProperty&) = delete;
+    FUnresolvedPtrProperty& operator=(const FUnresolvedPtrProperty&) = delete;
+    FUnresolvedPtrProperty(FUnresolvedPtrProperty&&) = delete;
+    FUnresolvedPtrProperty& operator=(FUnresolvedPtrProperty&&) = delete;
 
     virtual void DisplayInImGui(UObject* Object) const override;
     virtual void Resolve() override;
