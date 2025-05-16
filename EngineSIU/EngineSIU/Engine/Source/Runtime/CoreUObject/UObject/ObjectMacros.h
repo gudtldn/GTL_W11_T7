@@ -1,5 +1,6 @@
 // ReSharper disable CppClangTidyBugproneMacroParentheses
 // ReSharper disable CppClangTidyClangDiagnosticPedantic
+// ReSharper disable CppClangTidyClangDiagnosticReservedMacroIdentifier
 #pragma once
 #include "Class.h"
 #include "UObjectHash.h"
