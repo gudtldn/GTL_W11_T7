@@ -473,14 +473,14 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
 
                 if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), (*Object)->GetName().ToAnsiString().c_str()))
                 {
-                    for (const UObject* ChildObject : ChildObjects)
+                    for (UObject* ChildObject : ChildObjects)
                     {
                         const std::string ObjectName = ChildObject->GetName().ToAnsiString();
                         const bool bIsSelected = ChildObject == *Object;
                         if (ImGui::Selectable(ObjectName.c_str(), bIsSelected))
                         {
                             // TODO: 나중에 수정, 지금은 목록만 보여주고, 설정은 안함
-                            // *Object = ChildObject;
+                            *Object = ChildObject;
                         }
                         if (bIsSelected)
                         {
@@ -493,9 +493,13 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
             }
             else if (HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere))
             {
-                for (const FProperty* Prop : ObjectClass->GetProperties())
+                const UClass* ChildClass = ObjectClass;
+                for (; ChildClass; ChildClass = ChildClass->GetSuperClass())
                 {
-                    Prop->DisplayInImGui(*Object);
+                    for (const FProperty* Prop : ChildClass->GetProperties())
+                    {
+                        Prop->DisplayInImGui(*Object);
+                    }
                 }
             }
         }
