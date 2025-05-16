@@ -67,7 +67,7 @@ public: \
 
 
 // ---------- DECLARE_STRUCT 관련 매크로 ----------
-#define DECLARE_COMMON_STRUCT_BODY(TStruct) \
+#define DECLARE_COMMON_STRUCT_BODY(TStruct, TSuperStruct) \
 private: \
     inline static struct Z_TStruct##_StructRegistrar_PRIVATE \
     { \
@@ -77,11 +77,11 @@ private: \
         } \
     } Z_TStruct##_StructRegistrar_Instance_PRIVATE{}; \
 public: \
-    using Super = TStruct; \
+    using Super = TSuperStruct; \
     using ThisClass = TStruct;
 
 #define DECLARE_STRUCT_WITH_SUPER(TStruct, TSuperStruct) \
-    DECLARE_COMMON_STRUCT_BODY(TStruct) \
+    DECLARE_COMMON_STRUCT_BODY(TStruct, TSuperStruct) \
     static UScriptStruct* StaticStruct() \
     { \
         static UScriptStruct StructInfo{ \
@@ -94,7 +94,7 @@ public: \
     }
 
 #define DECLARE_STRUCT_NO_SUPER(TStruct) \
-    DECLARE_COMMON_STRUCT_BODY(TStruct) \
+    DECLARE_COMMON_STRUCT_BODY(TStruct, TStruct) \
     static UScriptStruct* StaticStruct() \
     { \
         static UScriptStruct StructInfo{ \
