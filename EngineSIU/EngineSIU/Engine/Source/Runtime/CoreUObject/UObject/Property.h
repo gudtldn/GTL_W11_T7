@@ -1001,24 +1001,7 @@ struct FSubclassOfProperty : public FProperty
     virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
 };
 
-struct FObjectBaseProperty : public FProperty
-{
-    FObjectBaseProperty(
-        UStruct* InOwnerStruct,
-        const char* InPropertyName,
-        EPropertyType InType,
-        int32 InSize,
-        int32 InOffset,
-        EPropertyFlags InFlags
-    )
-        : FProperty(InOwnerStruct, InPropertyName, InType, InSize, InOffset, InFlags)
-    {
-    }
-
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
-};
-
-struct FObjectProperty : public FObjectBaseProperty
+struct FObjectProperty : public FProperty
 {
     FObjectProperty(
         UStruct* InOwnerStruct,
@@ -1027,26 +1010,11 @@ struct FObjectProperty : public FObjectBaseProperty
         int64 InOffset,
         EPropertyFlags InFlags
     )
-        : FObjectBaseProperty(InOwnerStruct, InPropertyName, EPropertyType::Object, InSize, InOffset, InFlags)
-    {
-    }
-};
-
-struct FUnresolvedPtrProperty : public FObjectBaseProperty
-{
-    FUnresolvedPtrProperty(
-        UStruct* InOwnerStruct,
-        const char* InPropertyName,
-        int64 InSize,
-        int64 InOffset,
-        EPropertyFlags InFlags
-    )
-        : FObjectBaseProperty(InOwnerStruct, InPropertyName, EPropertyType::UnresolvedPointer, InSize, InOffset, InFlags)
+        : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Object, InSize, InOffset, InFlags)
     {
     }
 
-    virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void Resolve() override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
 };
 
 struct FStructProperty : public FProperty
@@ -1063,6 +1031,34 @@ struct FStructProperty : public FProperty
     }
 };
 
+struct FUnresolvedPtrProperty : public FProperty
+{
+    FProperty* ResolvedProperty = nullptr;
+
+    FUnresolvedPtrProperty(
+        UStruct* InOwnerStruct,
+        const char* InPropertyName,
+        int64 InSize,
+        int64 InOffset,
+        EPropertyFlags InFlags
+    )
+        : FProperty(InOwnerStruct, InPropertyName, EPropertyType::UnresolvedPointer, InSize, InOffset, InFlags)
+    {
+    }
+
+    virtual ~FUnresolvedPtrProperty() override
+    {
+        delete ResolvedProperty;
+    }
+
+    FUnresolvedPtrProperty(const FUnresolvedPtrProperty&) = default;
+    FUnresolvedPtrProperty& operator=(const FUnresolvedPtrProperty&) = default;
+    FUnresolvedPtrProperty(FUnresolvedPtrProperty&&) = default;
+    FUnresolvedPtrProperty& operator=(FUnresolvedPtrProperty&&) = default;
+
+    virtual void DisplayInImGui(UObject* Object) const override;
+    virtual void Resolve() override;
+};
 
 // struct FDelegateProperty : public FProperty {};  // TODO: 나중에 Delegate Property 만들기
 
@@ -1140,7 +1136,14 @@ FProperty* MakeProperty(
     }
 
     else if constexpr (TypeEnum == EPropertyType::Enum)        { return new TEnumProperty<T>     { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags }; }
-    else if constexpr (TypeEnum == EPropertyType::Struct)      { return new FStructProperty      { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags }; }
+    else if constexpr (TypeEnum == EPropertyType::Struct)
+    {
+        return new FStructProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+    }
+    else if constexpr (TypeEnum == EPropertyType::StructPointer)
+    {
+        // TODO: Implements This
+    }
     else if constexpr (TypeEnum == EPropertyType::SubclassOf)
     {
         if constexpr (std::derived_from<typename T::ElementType, UObject>)

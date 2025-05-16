@@ -454,7 +454,7 @@ void FSubclassOfProperty::DisplayRawDataInImGui(const char* PropertyLabel, void*
     }
 }
 
-void FObjectBaseProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const
+void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const
 {
     FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
 
@@ -504,8 +504,9 @@ void FObjectBaseProperty::DisplayRawDataInImGui(const char* PropertyLabel, void*
 
 void FUnresolvedPtrProperty::DisplayInImGui(UObject* Object) const
 {
-    if (Type == EPropertyType::Object)
+    if (Type == EPropertyType::Unknown)
     {
-        FObjectBaseProperty::DisplayInImGui(Object);
+        return;
     }
+    ResolvedProperty->DisplayInImGui(Object);
 }
