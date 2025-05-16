@@ -93,7 +93,7 @@ consteval EPropertyType GetPropertyType()
         }
 
         // 커스텀 구조체 포인터
-        else if constexpr (std::is_class_v<T> && requires { PointedToType::StaticStruct(); })
+        else if constexpr (std::is_class_v<PointedToType> && requires { PointedToType::StaticStruct(); })
         {
             return EPropertyType::StructPointer;
         }
