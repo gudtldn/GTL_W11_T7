@@ -90,3 +90,36 @@ bool UStruct::IsChildOf() const
 {
     return IsChildOf(T::StaticClass());
 }
+
+
+/**
+ * T가 UClass인지 UScriptStruct인지에 따라 각각의 StaticClass() 또는 StaticStruct()를 호출합니다.
+ * @tparam T UClass 또는 UScriptStruct 타입
+ * @return T의 StaticClass() 또는 StaticStruct()의 반환값
+ */
+template <typename T>
+requires
+    requires { T::StaticClass(); }
+    || requires { T::StaticStruct(); }
+[[nodiscard]] static UStruct* GetStructHelper()
+{
+    // UClass
+    if constexpr (requires { T::StaticClass(); })
+    {
+        return T::StaticClass();
+    }
+
+    // UScriptStruct
+    else if constexpr (requires { T::StaticStruct(); })
+    {
+        return T::StaticStruct();
+    }
+
+    else
+    {
+        // DECLARE_CLASS, DECLARE_STRUCT 없이 UPROPERTY만 선언한 경우
+        static_assert(TAlwaysFalse<T>, "T is neither UClass nor UScriptStruct");
+    }
+
+    std::unreachable();
+}
