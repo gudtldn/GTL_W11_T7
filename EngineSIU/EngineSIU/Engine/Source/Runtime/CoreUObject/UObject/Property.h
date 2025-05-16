@@ -26,8 +26,8 @@ struct FProperty
         UStruct* InOwnerStruct,
         const char* InPropertyName,
         EPropertyType InType,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : OwnerStruct(InOwnerStruct)
@@ -159,8 +159,8 @@ struct FNumericProperty : public FProperty
         UStruct* InOwnerStruct,
         const char* InPropertyName,
         EPropertyType InType,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, InType, InSize, InOffset, InFlags)
@@ -175,8 +175,8 @@ struct FInt8Property : public FNumericProperty
     FInt8Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Int8, InSize, InOffset, InFlags)
@@ -191,8 +191,8 @@ struct FInt16Property : public FNumericProperty
     FInt16Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Int16, InSize, InOffset, InFlags)
@@ -207,8 +207,8 @@ struct FInt32Property : public FNumericProperty
     FInt32Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Int32, InSize, InOffset, InFlags)
@@ -223,8 +223,8 @@ struct FInt64Property : public FNumericProperty
     FInt64Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Int64, InSize, InOffset, InFlags)
@@ -239,8 +239,8 @@ struct FUInt8Property : public FNumericProperty
     FUInt8Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::UInt8, InSize, InOffset, InFlags)
@@ -255,8 +255,8 @@ struct FUInt16Property : public FNumericProperty
     FUInt16Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::UInt16, InSize, InOffset, InFlags)
@@ -271,8 +271,8 @@ struct FUInt32Property : public FNumericProperty
     FUInt32Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::UInt32, InSize, InOffset, InFlags)
@@ -287,8 +287,8 @@ struct FUInt64Property : public FNumericProperty
     FUInt64Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::UInt64, InSize, InOffset, InFlags)
@@ -303,8 +303,8 @@ struct FFloatProperty : public FNumericProperty
     FFloatProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Float, InSize, InOffset, InFlags)
@@ -319,8 +319,8 @@ struct FDoubleProperty : public FNumericProperty
     FDoubleProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FNumericProperty(InOwnerStruct, InPropertyName, EPropertyType::Double, InSize, InOffset, InFlags)
@@ -335,8 +335,8 @@ struct FBoolProperty : public FProperty
     FBoolProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Bool, InSize, InOffset, InFlags)
@@ -352,8 +352,8 @@ struct FStrProperty : public FProperty
     FStrProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::String, InSize, InOffset, InFlags)
@@ -369,8 +369,8 @@ struct FNameProperty : public FProperty
     FNameProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Name, InSize, InOffset, InFlags)
@@ -384,8 +384,8 @@ struct FVector2DProperty : public FProperty
     FVector2DProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Vector2D, InSize, InOffset, InFlags)
@@ -401,8 +401,8 @@ struct FVectorProperty : public FProperty
     FVectorProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Vector, InSize, InOffset, InFlags)
@@ -418,8 +418,8 @@ struct FVector4Property : public FProperty
     FVector4Property(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Vector4, InSize, InOffset, InFlags)
@@ -435,8 +435,8 @@ struct FRotatorProperty : public FProperty
     FRotatorProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Rotator, InSize, InOffset, InFlags)
@@ -452,8 +452,8 @@ struct FQuatProperty : public FProperty
     FQuatProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Quat, InSize, InOffset, InFlags)
@@ -469,8 +469,8 @@ struct FTransformProperty : public FProperty
     FTransformProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Transform, InSize, InOffset, InFlags)
@@ -485,8 +485,8 @@ struct FMatrixProperty : public FProperty
     FMatrixProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Matrix, InSize, InOffset, InFlags)
@@ -501,8 +501,8 @@ struct FColorProperty : public FProperty
     FColorProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Color, InSize, InOffset, InFlags)
@@ -518,8 +518,8 @@ struct FLinearColorProperty : public FProperty
     FLinearColorProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::LinearColor, InSize, InOffset, InFlags)
@@ -540,8 +540,8 @@ struct TArrayProperty : public FProperty
     TArrayProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Array, InSize, InOffset, InFlags)
@@ -660,8 +660,8 @@ struct TMapProperty : public FProperty
     TMapProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Map, InSize, InOffset, InFlags)
@@ -811,8 +811,8 @@ struct TSetProperty : public FProperty
     TSetProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Set, InSize, InOffset, InFlags)
@@ -935,8 +935,8 @@ struct TEnumProperty : public FProperty
     TEnumProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Enum, InSize, InOffset, InFlags)
@@ -989,8 +989,8 @@ struct FSubclassOfProperty : public FProperty
     FSubclassOfProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::SubclassOf, InSize, InOffset, InFlags)
@@ -1023,8 +1023,8 @@ struct FObjectProperty : public FObjectBaseProperty
     FObjectProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FObjectBaseProperty(InOwnerStruct, InPropertyName, EPropertyType::Object, InSize, InOffset, InFlags)
@@ -1037,8 +1037,8 @@ struct FUnresolvedPtrProperty : public FObjectBaseProperty
     FUnresolvedPtrProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FObjectBaseProperty(InOwnerStruct, InPropertyName, EPropertyType::UnresolvedPointer, InSize, InOffset, InFlags)
@@ -1054,8 +1054,8 @@ struct FStructProperty : public FProperty
     FStructProperty(
         UStruct* InOwnerStruct,
         const char* InPropertyName,
-        int32 InSize,
-        int32 InOffset,
+        int64 InSize,
+        int64 InOffset,
         EPropertyFlags InFlags
     )
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Struct, InSize, InOffset, InFlags)
