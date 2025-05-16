@@ -561,7 +561,7 @@ struct TArrayProperty : public FProperty
 
         if (ImGui::TreeNode(PropertyLabel))
         {
-            ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+            ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
                 TArray<ElementType>* Data = static_cast<TArray<ElementType>*>(DataPtr);
 
@@ -681,7 +681,7 @@ struct TMapProperty : public FProperty
 
         if (ImGui::TreeNode(PropertyLabel))
         {
-            ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+            ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
                 const ImGuiIO& IO = ImGui::GetIO();
                 ImFont* IconFont = IO.Fonts->Fonts[1]; // FEATHER_FONT = 1
@@ -832,7 +832,7 @@ struct TSetProperty : public FProperty
     
         if (ImGui::TreeNode(PropertyLabel))
         {
-            ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+            ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
                 const ImGuiIO& IO = ImGui::GetIO();
                 ImFont* IconFont = IO.Fonts->Fonts[1]; // FEATHER_FONT = 1
@@ -945,7 +945,7 @@ struct TEnumProperty : public FProperty
 
     virtual void DisplayInImGui(UObject* Object) const override
     {
-        ImGui::BeginDisabled(HasFlag(Flags, EPropertyFlags::VisibleAnywhere));
+        ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
         {
             FProperty::DisplayInImGui(Object);
         }
