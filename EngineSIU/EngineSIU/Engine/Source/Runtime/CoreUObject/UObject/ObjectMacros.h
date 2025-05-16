@@ -3,6 +3,7 @@
 // ReSharper disable CppClangTidyClangDiagnosticReservedMacroIdentifier
 #pragma once
 #include "Class.h"
+#include "ScriptStruct.h"
 #include "UObjectHash.h"
 
 // MSVC에서 매크로 확장 문제를 해결하기 위한 매크로
@@ -63,6 +64,52 @@ public: \
         }; \
         return &ClassInfo; \
     }
+
+
+// ---------- DECLARE_STRUCT 관련 매크로 ----------
+#define DECLARE_COMMON_STRUCT_BODY(TStruct) \
+private: \
+    inline static struct Z_TStruct##_StructRegistrar_PRIVATE \
+    { \
+        Z_TStruct##_StructRegistrar_PRIVATE() \
+        { \
+            UScriptStruct::GetScriptStructMap().Add(FName(INLINE_STRINGIFY(TStruct)), TStruct::StaticStruct()); \
+        } \
+    } Z_TStruct##_StructRegistrar_Instance_PRIVATE{}; \
+public: \
+    using Super = TStruct; \
+    using ThisClass = TStruct;
+
+#define DECLARE_STRUCT_WITH_SUPER(TStruct, TSuperStruct) \
+    DECLARE_COMMON_STRUCT_BODY(TStruct) \
+    static UScriptStruct* StaticStruct() \
+    { \
+        static UScriptStruct StructInfo{ \
+            INLINE_STRINGIFY(TStruct), \
+            static_cast<uint32>(sizeof(TStruct)), \
+            static_cast<uint32>(alignof(TStruct)), \
+            TSuperStruct::StaticStruct() \
+        }; \
+        return &StructInfo; \
+    }
+
+#define DECLARE_STRUCT_NO_SUPER(TStruct) \
+    DECLARE_COMMON_STRUCT_BODY(TStruct) \
+    static UScriptStruct* StaticStruct() \
+    { \
+        static UScriptStruct StructInfo{ \
+            INLINE_STRINGIFY(TStruct), \
+            static_cast<uint32>(sizeof(TStruct)), \
+            static_cast<uint32>(alignof(TStruct)), \
+            nullptr \
+        }; \
+        return &StructInfo; \
+    }
+
+#define GET_OVERLOADED_STRUCT_MACRO(_1, _2, MACRO, ...) MACRO
+
+#define DECLARE_STRUCT(...) \
+    EXPAND_MACRO(GET_OVERLOADED_STRUCT_MACRO(__VA_ARGS__, DECLARE_STRUCT_WITH_SUPER, DECLARE_STRUCT_NO_SUPER)(__VA_ARGS__))
 
 
 // ---------- UProperty 관련 매크로 ----------
