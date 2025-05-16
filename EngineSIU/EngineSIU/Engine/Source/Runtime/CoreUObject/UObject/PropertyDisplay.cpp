@@ -1,6 +1,7 @@
 ﻿#include "Property.h"
 
 #include "Class.h"
+#include "ScriptStruct.h"
 #include "UObjectHash.h"
 #include "Editor/UnrealEd/ImGuiWidget.h"
 #include "Math/NumericLimits.h"
@@ -499,6 +500,24 @@ void FObjectProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* Dat
             }
         }
         ImGui::TreePop();
+    }
+}
+
+void FStructProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const
+{
+    FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+
+    if (UScriptStruct* const* StructType = std::get_if<UScriptStruct*>(&TypeSpecificData))
+    {
+        if (ImGui::TreeNodeEx(PropertyLabel, ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            for (const FProperty* Property : (*StructType)->GetProperties())
+            {
+                void* Data = static_cast<std::byte*>(DataPtr) + Property->Offset;
+                Property->DisplayRawDataInImGui(Property->Name, Data);
+            }
+            ImGui::TreePop();
+        }
     }
 }
 

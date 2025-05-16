@@ -1029,6 +1029,8 @@ struct FStructProperty : public FProperty
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Struct, InSize, InOffset, InFlags)
     {
     }
+
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
 };
 
 struct FUnresolvedPtrProperty : public FProperty
