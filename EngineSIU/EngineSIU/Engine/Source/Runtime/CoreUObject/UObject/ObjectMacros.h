@@ -69,13 +69,13 @@ public: \
 // ---------- DECLARE_STRUCT 관련 매크로 ----------
 #define DECLARE_COMMON_STRUCT_BODY(TStruct, TSuperStruct) \
 private: \
-    inline static struct Z_TStruct##_StructRegistrar_PRIVATE \
+    inline static struct Z_##TStruct##_StructRegistrar_PRIVATE \
     { \
-        Z_TStruct##_StructRegistrar_PRIVATE() \
+        Z_##TStruct##_StructRegistrar_PRIVATE() \
         { \
             UScriptStruct::GetScriptStructMap().Add(FName(INLINE_STRINGIFY(TStruct)), TStruct::StaticStruct()); \
         } \
-    } Z_TStruct##_StructRegistrar_Instance_PRIVATE{}; \
+    } Z_##TStruct##_StructRegistrar_Instance_PRIVATE{}; \
 public: \
     using Super = TSuperStruct; \
     using ThisClass = TStruct;
