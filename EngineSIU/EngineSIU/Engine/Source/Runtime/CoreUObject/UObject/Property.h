@@ -1135,26 +1135,31 @@ FProperty* MakeProperty(
         return Property;
     }
 
-    else if constexpr (TypeEnum == EPropertyType::Enum)        { return new TEnumProperty<T>     { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags }; }
+    else if constexpr (TypeEnum == EPropertyType::Enum)
+    {
+        return new TEnumProperty<T>{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+    }
     else if constexpr (TypeEnum == EPropertyType::Struct)
     {
-        return new FStructProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+        FProperty* Property = new FStructProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+        Property->TypeSpecificData = T::StaticStruct();
+        return Property;
     }
     else if constexpr (TypeEnum == EPropertyType::StructPointer)
     {
         using PointerType = std::remove_cvref_t<std::remove_pointer_t<T>>;
-        FUnresolvedPtrProperty* Property = new FUnresolvedPtrProperty{InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags};
+        FUnresolvedPtrProperty* Property = new FUnresolvedPtrProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
 
         Property->Type = EPropertyType::Struct;
         Property->TypeSpecificData = PointerType::StaticStruct();
-        Property->ResolvedProperty = new FStructProperty{InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags};
+        Property->ResolvedProperty = new FStructProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
         return Property;
     }
     else if constexpr (TypeEnum == EPropertyType::SubclassOf)
     {
         if constexpr (std::derived_from<typename T::ElementType, UObject>)
         {
-            FProperty* Property = new FSubclassOfProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+            FProperty* Property = new FSubclassOfProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
             Property->TypeSpecificData = T::ElementType::StaticClass();
             return Property;
         }
@@ -1167,14 +1172,14 @@ FProperty* MakeProperty(
     else if constexpr (TypeEnum == EPropertyType::Object)
     {
         using PointerType = std::remove_cvref_t<std::remove_pointer_t<T>>;
-        FProperty* Property = new FObjectProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+        FProperty* Property = new FObjectProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
         Property->TypeSpecificData = PointerType::StaticClass();
         return Property;
     }
     else if constexpr (TypeEnum == EPropertyType::UnresolvedPointer)
     {
         constexpr std::string_view TypeName = GetTypeNameString<T>();
-        FProperty* Property = new FUnresolvedPtrProperty { InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+        FProperty* Property = new FUnresolvedPtrProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
         Property->TypeSpecificData = FName(TypeName.data(), TypeName.size());
         return Property;
     }
