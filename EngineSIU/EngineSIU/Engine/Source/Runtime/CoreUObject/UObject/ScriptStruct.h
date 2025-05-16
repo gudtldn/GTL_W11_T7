@@ -24,4 +24,11 @@ public:
 
     using Super = UStruct;
     using ThisClass = UScriptStruct;
+
+public:
+    // 전역 ScriptStruct 맵 접근
+    static TMap<FName, UScriptStruct*>& GetScriptStructMap();
+
+    // 이름으로 ScriptStruct 찾기
+    static UScriptStruct* FindScriptStruct(const FName& StructName);
 };
