@@ -12,7 +12,7 @@ class UStruct : public UObject
 {
 public:
     UStruct(
-        const FName& InName,
+        const char* InName,
         uint32 InStructSize,
         uint32 InAlignment,
         UStruct* InSuperStruct
