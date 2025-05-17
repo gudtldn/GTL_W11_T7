@@ -7,28 +7,29 @@ extern FEngineLoop GEngineLoop;
 
 class UClass;
 class UWorld;
-class AActor;
 
 class UObject
 {
-    friend class AActor;
-private:
-    UObject(const UObject&) = delete;
-    UObject& operator=(const UObject&) = delete;
-    UObject(UObject&&) = delete;
-    UObject& operator=(UObject&&) = delete;
-
 public:
     using Super = UObject;
     using ThisClass = UObject;
 
     static UClass* StaticClass();
 
+    UObject();
+    virtual ~UObject() = default;
+
+    UObject(const UObject&) = delete;
+    UObject& operator=(const UObject&) = delete;
+    UObject(UObject&&) = delete;
+    UObject& operator=(UObject&&) = delete;
+
 private:
     friend class FObjectFactory;
     friend class FSceneMgr;
     friend class UStruct;
     friend class UClass;
+    friend class AActor;
 
     uint32 UUID;
     uint32 InternalIndex; // Index of GUObjectArray
@@ -37,14 +38,11 @@ private:
     UClass* ClassPrivate = nullptr;
     UObject* OuterPrivate = nullptr;
 
-    
+
     // FName을 키값으로 넣어주는 컨테이너를 모두 업데이트 해야합니다.
     void SetFName(const FName& InName) { NamePrivate = InName; }
 
 public:
-    UObject();
-    virtual ~UObject() = default;
-
     virtual UObject* Duplicate(UObject* InOuter);
 
     UObject* GetOuter() const { return OuterPrivate; }
@@ -53,7 +51,6 @@ public:
 
     FName GetFName() const { return NamePrivate; }
     FString GetName() const { return NamePrivate.ToString(); }
-
 
     uint32 GetUUID() const { return UUID; }
     uint32 GetInternalIndex() const { return InternalIndex; }
@@ -64,7 +61,6 @@ public:
     bool IsA(const UClass* SomeBase) const;
 
     template <typename T>
-        // requires std::derived_from<T, UObject>
     bool IsA() const
     {
         return IsA(T::StaticClass());
