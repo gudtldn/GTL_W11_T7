@@ -77,22 +77,30 @@ public:
 
 protected:
     /** 부모 컴포넌트로부터 상대적인 위치 */
-    UPROPERTY
-    (FVector, RelativeLocation)
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere | LuaReadOnly,
+        FVector, RelativeLocation
+    )
 
     /** 부모 컴포넌트로부터 상대적인 회전 */
-    UPROPERTY
-    (FRotator, RelativeRotation)
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere | LuaReadOnly,
+        FRotator, RelativeRotation
+    )
 
     /** 부모 컴포넌트로부터 상대적인 크기 */
-    UPROPERTY
-    (FVector, RelativeScale3D)
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere | LuaReadOnly,
+        FVector, RelativeScale3D
+    )
 
     UPROPERTY
     (USceneComponent*, AttachParent, = nullptr)
 
-    UPROPERTY
-    (TArray<USceneComponent*>, AttachChildren)
+    UPROPERTY_WITH_FLAGS(
+        Transient,
+        TArray<USceneComponent*>, AttachChildren
+    )
 
     virtual void UpdateOverlapsImpl(const TArray<FOverlapInfo>* PendingOverlaps = nullptr, bool bDoNotifies = true, const TArray<const FOverlapInfo>* OverlapsAtEndLocation = nullptr);
 
@@ -101,12 +109,13 @@ protected:
 public:
     bool IsUsingAbsoluteRotation() const;
     void SetUsingAbsoluteRotation(const bool bInAbsoluteRotation);
-protected:
-    uint8 bAbsoluteRotation : 1;
-    
-private:
-    // TODO: 캐싱해서 사용하기
-    bool bComponentToWorldUpdated = true;
 
+protected:
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere | LuaReadWrite,
+        uint8, bAbsoluteRotation, : 1; // TODO: BitField 매크로 만들기
+    )
+
+private:
     FTransform ComponentToWorld;
 };
