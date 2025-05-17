@@ -116,7 +116,10 @@ private:
 
 
     /** 현재 Actor가 삭제 처리중인지 여부 */
-    uint8 bActorIsBeingDestroyed : 1 = false;
+    UPROPERTY(
+        BitField,
+        uint8, bActorIsBeingDestroyed, : 1 = false; // TODO: BitField 매크로 만들기
+    )
 
 #if 1 // TODO: WITH_EDITOR 추가
 public:
@@ -145,8 +148,11 @@ public:
 private:
     bool bTickInEditor = false;     // Editor Tick을 수행 여부
 
-    bool bHidden = false;
-    
+    UPROPERTY(
+        EditAnywhere | LuaReadOnly,
+        bool, bHidden, = false;
+    )
+
 public:
     /** 
      * Called when another actor begins to overlap this actor, for example a player walking into a trigger.
