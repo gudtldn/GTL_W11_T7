@@ -117,6 +117,8 @@ public: \
 // ---------- UProperty 관련 매크로 ----------
 #define GET_FIRST_ARG(First, ...) First
 #define FIRST_ARG(...) GET_FIRST_ARG(__VA_ARGS__, )
+#define GET_OVERLOADED_PROPERTY_MACRO(_1, _2, _3, _4, MACRO, ...) MACRO
+
 
 #define UPROPERTY_WITH_FLAGS(InFlags, InType, InVarName, ...) \
     InType InVarName FIRST_ARG(__VA_ARGS__); \
@@ -136,7 +138,8 @@ public: \
 #define UPROPERTY_DEFAULT(InType, InVarName, ...) \
     UPROPERTY_WITH_FLAGS(EPropertyFlags::PropertyNone, InType, InVarName, __VA_ARGS__)
 
-#define GET_OVERLOADED_PROPERTY_MACRO(_1, _2, _3, _4, MACRO, ...) MACRO
+#define UPROPERTY_WITH_BITFIELD(InFlags, InType, InVarName, ...) \
+    InType InVarName FIRST_ARG(__VA_ARGS__);
 
 /**
  * UClass에 Property를 등록합니다.

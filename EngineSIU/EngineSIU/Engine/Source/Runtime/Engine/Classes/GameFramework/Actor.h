@@ -116,7 +116,7 @@ private:
 
 
     /** 현재 Actor가 삭제 처리중인지 여부 */
-    UPROPERTY(
+    UPROPERTY_WITH_BITFIELD(
         BitField,
         uint8, bActorIsBeingDestroyed, : 1 = false; // TODO: BitField 매크로 만들기
     )

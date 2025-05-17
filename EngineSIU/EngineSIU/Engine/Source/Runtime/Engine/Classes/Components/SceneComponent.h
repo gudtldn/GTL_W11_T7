@@ -111,7 +111,7 @@ public:
     void SetUsingAbsoluteRotation(const bool bInAbsoluteRotation);
 
 protected:
-    UPROPERTY_WITH_FLAGS(
+    UPROPERTY_WITH_BITFIELD(
         EditAnywhere | LuaReadWrite,
         uint8, bAbsoluteRotation, : 1; // TODO: BitField 매크로 만들기
     )
