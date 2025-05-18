@@ -38,13 +38,34 @@ public:
     virtual void SetProperties(const TMap<FString, FString>& InProperties) override;
 
 private:
-    float ProjectileLifetime; // 생명주기
-    float AccumulatedTime;
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        float, ProjectileLifetime // 생명주기
+    )
 
-    float InitialSpeed;
-    float MaxSpeed;
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        float, AccumulatedTime
+    )
 
-    float Gravity;
-    FVector Velocity;
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        float, InitialSpeed
+    )
+
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        float, MaxSpeed
+    )
+
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        float, Gravity
+    )
+
+    UPROPERTY_WITH_FLAGS(
+        EditAnywhere,
+        FVector, Velocity
+    )
 };
 
