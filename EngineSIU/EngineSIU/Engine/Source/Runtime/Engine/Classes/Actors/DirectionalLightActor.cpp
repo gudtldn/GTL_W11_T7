@@ -14,10 +14,6 @@ ADirectionalLight::ADirectionalLight()
     DirectionalLightComponent->AttachToComponent(RootComponent);
 }
 
-ADirectionalLight::~ADirectionalLight()
-{
-}
-
 void ADirectionalLight::SetIntensity(float Intensity)
 {
     if (DirectionalLightComponent)

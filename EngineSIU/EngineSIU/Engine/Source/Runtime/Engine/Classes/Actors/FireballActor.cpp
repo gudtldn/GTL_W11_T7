@@ -30,10 +30,6 @@ AFireballActor::AFireballActor()
     ProjectileMovementComponent->SetLifetime(10);
 }
 
-AFireballActor::~AFireballActor()
-{
-}
-
 void AFireballActor::BeginPlay()
 {
 }

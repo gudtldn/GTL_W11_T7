@@ -1,8 +1,8 @@
 #pragma once
-
 #include "GameFramework/Actor.h"
 
 class UHeightFogComponent;
+
 
 class AHeightFogActor : public AActor
 {
@@ -11,5 +11,8 @@ class AHeightFogActor : public AActor
 public:
     AHeightFogActor();
 
-    UHeightFogComponent* HeightFogComponent;
+    UPROPERTY_WITH_FLAGS(
+        VisibleAnywhere,
+        UHeightFogComponent*, HeightFogComponent
+    )
 };

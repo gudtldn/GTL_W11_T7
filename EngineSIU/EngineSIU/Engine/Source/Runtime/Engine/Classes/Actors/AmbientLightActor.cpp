@@ -15,7 +15,3 @@ AAmbientLight::AAmbientLight()
     AmbientLightComponent->AttachToComponent(RootComponent);
 
 }
-
-AAmbientLight::~AAmbientLight()
-{
-}

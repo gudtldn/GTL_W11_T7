@@ -14,7 +14,3 @@ APointLight::APointLight()
 
     PointLightComponent->AttachToComponent(RootComponent);
 }
-
-APointLight::~APointLight()
-{
-}

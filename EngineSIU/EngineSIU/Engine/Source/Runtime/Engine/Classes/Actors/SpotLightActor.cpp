@@ -13,7 +13,3 @@ ASpotLight::ASpotLight()
 
     SpotLightComponent->AttachToComponent(RootComponent);
 }
-
-ASpotLight::~ASpotLight()
-{
-}

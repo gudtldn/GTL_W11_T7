@@ -12,8 +12,9 @@ public:
 
     USphereComponent* GetShapeComponent() const;
 protected:
-    UPROPERTY
-    (USphereComponent*, SphereComponent, = nullptr);
-
+    UPROPERTY(
+        VisibleAnywhere,
+        USphereComponent*, SphereComponent, = nullptr;
+    )
 };
 

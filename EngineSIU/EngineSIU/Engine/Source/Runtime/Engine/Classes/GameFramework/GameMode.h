@@ -18,6 +18,7 @@ struct FGameInfo
 class AGameMode : public AActor
 {
     DECLARE_CLASS(AGameMode, AActor)
+
 public:
     AGameMode();
     virtual ~AGameMode() override;

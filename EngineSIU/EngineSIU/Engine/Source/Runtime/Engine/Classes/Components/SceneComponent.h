@@ -113,7 +113,7 @@ public:
 protected:
     UPROPERTY_WITH_BITFIELD(
         EditAnywhere | LuaReadWrite,
-        uint8, bAbsoluteRotation, : 1; // TODO: BitField 매크로 만들기
+        uint8, bAbsoluteRotation, : 1;
     )
 
 private:

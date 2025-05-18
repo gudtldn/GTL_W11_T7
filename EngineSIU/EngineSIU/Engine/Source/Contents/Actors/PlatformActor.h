@@ -3,6 +3,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 
+
 class APlatformActor : public AActor
 {
     DECLARE_CLASS(APlatformActor, AActor)
@@ -12,9 +13,13 @@ public:
     virtual ~APlatformActor() override = default;
 
 protected:
-    UPROPERTY
-    (UBoxComponent*, BoxComponent, = nullptr)
+    UPROPERTY(
+        VisibleAnywhere,
+        UBoxComponent*, BoxComponent, = nullptr;
+    )
 
-    UPROPERTY
-    (UStaticMeshComponent*, MeshComponent, = nullptr)
+    UPROPERTY(
+        VisibleAnywhere,
+        UStaticMeshComponent*, MeshComponent, = nullptr;
+    )
 };

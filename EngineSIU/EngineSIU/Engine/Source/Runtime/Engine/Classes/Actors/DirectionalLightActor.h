@@ -6,16 +6,19 @@ class ADirectionalLight : public ALight
     
 public:
     ADirectionalLight();
-    virtual ~ADirectionalLight();
 
 public:
     void SetIntensity(float Intensity);
 
 protected:
-    UPROPERTY
-    (UDirectionalLightComponent*, DirectionalLightComponent, = nullptr);
+    UPROPERTY(
+        VisibleAnywhere,
+        UDirectionalLightComponent*, DirectionalLightComponent, = nullptr;
+    )
 
-    UPROPERTY
-    (UBillboardComponent*, BillboardComponent, = nullptr);
+    UPROPERTY(
+        VisibleAnywhere,
+        UBillboardComponent*, BillboardComponent, = nullptr;
+    )
 };
 

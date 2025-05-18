@@ -1,17 +1,23 @@
 #pragma once
 #include "LightActor.h"
-class APointLight :
-    public ALight
+
+
+class APointLight : public ALight
 {
     DECLARE_CLASS(APointLight, ALight)
+
 public:
     APointLight();
-    virtual ~APointLight();
-protected:
-    UPROPERTY
-    (UPointLightComponent*, PointLightComponent, = nullptr);
 
-    UPROPERTY
-    (UBillboardComponent*, BillboardComponent, = nullptr);
+protected:
+    UPROPERTY(
+        VisibleAnywhere,
+        UPointLightComponent*, PointLightComponent, = nullptr;
+    )
+
+    UPROPERTY(
+        VisibleAnywhere,
+        UBillboardComponent*, BillboardComponent, = nullptr;
+    )
 };
 

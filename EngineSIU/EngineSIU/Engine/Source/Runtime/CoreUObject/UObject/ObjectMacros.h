@@ -138,6 +138,7 @@ public: \
 #define UPROPERTY_DEFAULT(InType, InVarName, ...) \
     UPROPERTY_WITH_FLAGS(EPropertyFlags::PropertyNone, InType, InVarName, __VA_ARGS__)
 
+// TODO: BitField 매크로 만들기
 #define UPROPERTY_WITH_BITFIELD(InFlags, InType, InVarName, ...) \
     InType InVarName FIRST_ARG(__VA_ARGS__);
 

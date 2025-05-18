@@ -14,6 +14,8 @@ public:
     UStaticMeshComponent* GetStaticMeshComponent() const;
 
 protected:
-    UPROPERTY
-    (UStaticMeshComponent*, StaticMeshComponent, = nullptr);
+    UPROPERTY(
+        VisibleAnywhere,
+        UStaticMeshComponent*, StaticMeshComponent, = nullptr;
+    )
 };
