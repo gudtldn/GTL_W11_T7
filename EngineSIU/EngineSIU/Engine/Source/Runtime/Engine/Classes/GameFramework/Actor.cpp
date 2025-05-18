@@ -239,7 +239,7 @@ void AActor::InitializeComponents()
     TSet<UActorComponent*> Components = GetComponents();
     for (UActorComponent* ActorComp : Components)
     {
-        if (ActorComp->bAutoActive && !ActorComp->IsActive())
+        if (ActorComp->bAutoActivate && !ActorComp->IsActive())
         {
             ActorComp->Activate();
         }

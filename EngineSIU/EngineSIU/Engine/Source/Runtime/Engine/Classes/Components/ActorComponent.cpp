@@ -9,7 +9,7 @@ UObject* UActorComponent::Duplicate(UObject* InOuter)
 
     NewComponent->OwnerPrivate = OwnerPrivate;
     NewComponent->bIsActive = bIsActive;
-    NewComponent->bAutoActive = bAutoActive;
+    NewComponent->bAutoActivate = bAutoActivate;
 
     return NewComponent;
 }
@@ -29,7 +29,7 @@ void UActorComponent::GetProperties(TMap<FString, FString>& OutProperties) const
     //Properties.Add(TEXT("bRegistered"), bRegistered ? TEXT("true") : TEXT("false"));
     //Properties.Add(TEXT("bWantsInitializeComponent"), bWantsInitializeComponent ? TEXT("true") : TEXT("false"));
     Properties.Add(TEXT("bIsActive"), bIsActive ? TEXT("true") : TEXT("false"));
-    Properties.Add(TEXT("bAutoActive"), bAutoActive ? TEXT("true") : TEXT("false"));
+    Properties.Add(TEXT("bAutoActivate"), bAutoActivate ? TEXT("true") : TEXT("false"));
     
 }
 
@@ -41,13 +41,13 @@ void UActorComponent::SetProperties(const TMap<FString, FString>& Properties)
 
     // --- 설정 값 복원 ---
 
-    TempStr = Properties.Find(TEXT("bAutoActive")); // bAutoActive 변수가 있다고 가정
+    TempStr = Properties.Find(TEXT("bAutoActivate")); // bAutoActivate 변수가 있다고 가정
     if (TempStr)
     {
         // 이 플래그는 보통 BeginPlay나 InitializeComponent 등에서
         // SetActive를 호출할지 여부를 결정하는 데 사용될 수 있습니다.
         // 여기서는 플래그 값 자체만 복원합니다.
-        this->bAutoActive = TempStr->ToBool();
+        this->bAutoActivate = TempStr->ToBool();
     }
 
 
