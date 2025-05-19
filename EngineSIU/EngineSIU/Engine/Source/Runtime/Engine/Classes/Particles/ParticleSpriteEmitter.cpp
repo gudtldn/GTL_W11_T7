@@ -20,15 +20,6 @@ FParticleEmitterInstance* UParticleSpriteEmitter::CreateInstance(UParticleSystem
         assert(InComponent);
         Instance = new FParticleSpriteEmitterInstance();
         assert(Instance);
-
-        Instance->InitParameters(this, InComponent);
-    }
-
-    if (Instance)
-    {
-        Instance->CurrentLODLevelIndex = 0;
-        Instance->CurrentLODLevel = LODLevels[Instance->CurrentLODLevelIndex];
-        Instance->Init();
     }
 
     return Instance;

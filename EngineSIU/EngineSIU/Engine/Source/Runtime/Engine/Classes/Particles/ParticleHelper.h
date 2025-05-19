@@ -2,6 +2,7 @@
 #include "Math/Vector.h"
 #include "Math/Color.h"
 
+class UParticleModuleRequired;
 struct FBaseParticle
 {
     // 24 bytes
@@ -37,30 +38,17 @@ struct FBaseParticle
     float			Placeholder1;
 };
 
-/*-----------------------------------------------------------------------------
-    Particle State Flags
------------------------------------------------------------------------------*/
 enum EParticleStates
 {
-    /** Ignore updates to the particle						*/
     STATE_Particle_JustSpawned = 0x02000000,
-    /** Ignore updates to the particle						*/
     STATE_Particle_Freeze = 0x04000000,
-    /** Ignore collision updates to the particle			*/
     STATE_Particle_IgnoreCollisions = 0x08000000,
-    /**	Stop translations of the particle					*/
     STATE_Particle_FreezeTranslation = 0x10000000,
-    /**	Stop rotations of the particle						*/
     STATE_Particle_FreezeRotation = 0x20000000,
-    /** Combination for a single check of 'ignore' flags	*/
     STATE_Particle_CollisionIgnoreCheck = STATE_Particle_Freeze | STATE_Particle_IgnoreCollisions | STATE_Particle_FreezeTranslation | STATE_Particle_FreezeRotation,
-    /** Delay collision updates to the particle				*/
     STATE_Particle_DelayCollisions = 0x40000000,
-    /** Flag indicating the particle has had at least one collision	*/
     STATE_Particle_CollisionHasOccurred = 0x80000000,
-    /** State mask. */
     STATE_Mask = 0xFE000000,
-    /** Counter mask. */
     STATE_CounterMask = (~STATE_Mask)
 };
 
@@ -80,8 +68,8 @@ struct FParticleDataContainer
     int32 MemBlockSize;
     int32 ParticleDataNumBytes;
     int32 ParticleIndicesNumShorts;
-    uint8* ParticleData; // this is also the memory block we allocated
-    uint16* ParticleIndices; // not allocated, this is at the end of the memory block
+    uint8* ParticleData;
+    uint16* ParticleIndices;
 
     FParticleDataContainer()
         : MemBlockSize(0)
@@ -95,9 +83,103 @@ struct FParticleDataContainer
     {
         Free();
     }
+
     void Alloc(int32 InParticleDataNumBytes, int32 InParticleIndicesNumShorts);
     void Free();
 };
 
+struct FDynamicEmitterReplayDataBase
+{
+    EDynamicEmitterType eEmitterType;
+    int32 ActiveParticleCount;
+    int32 ParticleStride;
+    FParticleDataContainer DataContainer;
+    FVector Scale;
+    uint32 SortMode;
+
+    FDynamicEmitterReplayDataBase()
+        : eEmitterType(DET_Unknown),
+        ActiveParticleCount(0),
+        ParticleStride(0),
+        Scale(FVector(1.0f, 1.0f, 1.0f)),
+        SortMode(0)
+    {
+    }
+};
+
+struct FDynamicEmitterDataBase
+{
+    FDynamicEmitterDataBase(const UParticleModuleRequired* RequiredModule);
+
+    virtual const FDynamicEmitterReplayDataBase& GetSource() const = 0;
+    int32  EmitterIndex;
+};
+
+struct FDynamicSpriteEmitterDataBase : public FDynamicEmitterDataBase
+{
+    FDynamicSpriteEmitterDataBase(const UParticleModuleRequired* RequiredModule) :
+        FDynamicEmitterDataBase(RequiredModule)
+    {
+    }
+
+    virtual ~FDynamicSpriteEmitterDataBase()
+    {
+    }
+    void SortSpriteParticles() {};
+};
+
+class UMaterial;
+struct FDynamicSpriteEmitterReplayDataBase : public FDynamicEmitterReplayDataBase
+{
+    UMaterial* Material = nullptr;
+};
+
+struct FDynamicSpriteEmitterReplayData : public FDynamicSpriteEmitterReplayDataBase
+{
+};
+
+struct FDynamicSpriteEmitterData : public FDynamicSpriteEmitterDataBase
+{
+    FDynamicSpriteEmitterData(const UParticleModuleRequired* RequiredModule) :
+        FDynamicSpriteEmitterDataBase(RequiredModule)
+    {
+    }
+
+    ~FDynamicSpriteEmitterData()
+    {
+    }
+    void Init() {}
+    virtual const FDynamicEmitterReplayDataBase& GetSource() const override
+    {
+        return Source;
+    }
+    FDynamicSpriteEmitterReplayData Source;
+};
+
+struct FDynamicMeshEmitterReplayDataBase : FDynamicEmitterReplayDataBase
+{
+};
+
+struct FDynamicMeshEmitterReplayData : public FDynamicMeshEmitterReplayDataBase
+{
+};
+
+struct FDynamicMeshEmitterData : public FDynamicSpriteEmitterDataBase
+{
+    void Init() {}
+    virtual const FDynamicEmitterReplayDataBase& GetSource() const override
+    {
+        return Source;
+    }
+    FDynamicMeshEmitterReplayData Source;
+};
+
 #define DECLARE_PARTICLE_PTR(Name,Address)		\
 	FBaseParticle* Name = (FBaseParticle*) (Address);
+
+#define SPAWN_INIT																										\
+	assert((Owner != NULL) && (Owner->Component != NULL));																\
+	const int32		ActiveParticles	= Owner->ActiveParticles;															\
+	const uint32	ParticleStride	= Owner->ParticleStride;															\
+	uint32			CurrentOffset	= Offset;																			\
+	FBaseParticle&	Particle		= *(ParticleBase);

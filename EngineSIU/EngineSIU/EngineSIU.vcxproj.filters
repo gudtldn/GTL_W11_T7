@@ -1694,6 +1694,8 @@
     <ClCompile Include="Engine\Source\Runtime\Windows\SubWindow\SubRenderer.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Windows\SubWindow\ParticleSubEngine.cpp" />
     <ClCompile Include="Engine\Source\Editor\PropertyEditor\SubEditor\ParticleViewerPanel.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Renderer\ParticleRenderPass.cpp" />
+    <ClCompile Include="Engine\Source\Contents\Actors\ParticleSystemActor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="EngineSIU.natvis" />
@@ -1784,6 +1786,8 @@
     <ClInclude Include="Engine\Source\Runtime\Windows\SubWindow\SubRenderer.h" />
     <ClInclude Include="Engine\Source\Runtime\Windows\SubWindow\ParticleSubEngine.h" />
     <ClInclude Include="Engine\Source\Editor\PropertyEditor\SubEditor\ParticleViewerPanel.h" />
+    <ClInclude Include="Engine\Source\Runtime\Renderer\ParticleRenderPass.h" />
+    <ClInclude Include="Engine\Source\Contents\Actors\ParticleSystemActor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\CompositingShader.hlsl" />
@@ -1815,5 +1819,6 @@
     <None Include="Shaders\StaticMeshPixelShaderWorldTangent.hlsl" />
     <None Include="Shaders\SkeletalMeshPixelShader.hlsl" />
     <None Include="Shaders\SkeletalMeshVertexShader.hlsl" />
+    <None Include="Shaders\ParticleShader.hlsl" />
   </ItemGroup>
 </Project>

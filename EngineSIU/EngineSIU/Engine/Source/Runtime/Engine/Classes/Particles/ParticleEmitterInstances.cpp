@@ -8,6 +8,7 @@
 #include "Components/ParticleSystemComponent.h"
 #include "Particles/ParticleHelper.h"
 #include "Particles/ParticleModules/ParticleModuleSpawn.h"
+#include "Components/Material/Material.h"
 #include "Components/SceneComponent.h"
 
 
@@ -34,7 +35,6 @@ void FParticleEmitterInstance::Init()
     ParticleSize = SpriteTemplate->ParticleSize;
     
     PayloadOffset = ParticleSize;
-
 }
 
 void FParticleEmitterInstance::Tick(float DeltaTime)
@@ -51,6 +51,7 @@ void FParticleEmitterInstance::Tick(float DeltaTime)
 
     if (bEnabled)
     {
+
         KillParticles();
 
         // ResetParticleParameters(); 아직 뭐하는 앤지 잘 모르겠음
@@ -175,7 +176,7 @@ void FParticleEmitterInstance::SpawnParticles(int32 Count, float StartTime, floa
     const float InterpIncrement = (Count > 0 && Increment > 0.0f) ? (1.0f / (float)Count) : 0.0f;
     for (int32 i = 0; i < Count; i++)
     {
-        if (!ParticleData || ParticleIndices)
+        if (!ParticleData || !ParticleIndices)
         {
             UE_LOG(ELogLevel::Error, TEXT("ParticleData is null or ParticleIndices is null"));
             continue;
@@ -251,7 +252,7 @@ float FParticleEmitterInstance::Spawn(float DeltaTime)
         UParticleModuleSpawnBase* SpawnModule = LODLevel->SpawningModules[SpawnModIndex];
         if (SpawnModule && SpawnModule->bEnabled)
         {
-            UParticleModule* OffsetModule = HighestLODLevel->SpawnModules[SpawnModIndex];
+            UParticleModule* OffsetModule = HighestLODLevel->SpawningModules[SpawnModIndex];
             uint32 Offset = GetModuleDataOffset(OffsetModule);
 
             int32 Number = 0;
@@ -293,9 +294,9 @@ float FParticleEmitterInstance::Spawn(float DeltaTime)
         NewLeftOver = NewLeftOver - Number;
 
         bool bProcessSpawn = true;
-        int32 NewCount = ActiveParticles + Number + BurstCount; // 일단 버스트 기능 없으므로 얘는 0
+        int32 NewCount = ActiveParticles + Number + BurstCount; // 일단 버스트 기능 없으므로 BurstCount는 0
 
-        if (NewCount > 1000) // 이 값은 언리얼엔인의 FXConsoleVariables::MaxCpuParticlesPerFrame
+        if (NewCount > 1000) // 이 값은 언리얼엔진의 FXConsoleVariables::MaxCpuParticlesPerFrame
         {
             int32 MaxNewParticles = 1000 - ActiveParticles;
             BurstCount = FMath::Min(MaxNewParticles, BurstCount);
@@ -306,7 +307,7 @@ float FParticleEmitterInstance::Spawn(float DeltaTime)
 
         if (NewCount > MaxActiveParticles)
         {
-            bProcessSpawn = Resize(NewCount, true);
+            bProcessSpawn = Resize(NewCount * 2, true); // 두 배로 리사이즈
         }
 
         if (bProcessSpawn)
@@ -346,7 +347,41 @@ void FParticleEmitterInstance::PostSpawn(FBaseParticle* Particle, float Interpol
 
 bool FParticleEmitterInstance::FillReplayData(FDynamicEmitterReplayDataBase& OutData)
 {
-    return false;
+    if (!SpriteTemplate || ActiveParticles <= 0 || !bEnabled)
+    {
+        return false;
+    }
+
+    UParticleLODLevel* LODLevel = SpriteTemplate->GetCurrentLODLevel(this);
+    if (!LODLevel || LODLevel->bEnabled == false)
+    {
+        return false;
+    }
+    OutData.eEmitterType = DET_Unknown;
+
+    OutData.ActiveParticleCount = ActiveParticles;
+    OutData.ParticleStride = ParticleStride;
+    //OutData.SortMode = SortMode;
+
+    OutData.Scale = FVector(1.0f, 1.0f, 1.0f);
+    if (Component)
+    {
+        OutData.Scale = Component->GetComponentScale3D();
+    }
+
+    int32 ParticleMemSize = MaxActiveParticles * ParticleStride;
+
+    // 여기서 데이터의 메모리 할당 및 복사
+    OutData.DataContainer.Alloc(ParticleMemSize, MaxActiveParticles);
+    std::memcpy(OutData.DataContainer.ParticleData, ParticleData, ParticleMemSize);
+    std::memcpy(OutData.DataContainer.ParticleIndices, ParticleIndices, OutData.DataContainer.ParticleIndicesNumShorts * sizeof(uint16));
+    {
+        // !TODO : 여기서 Sprite관련 기타 프로퍼티 및 Offset들 복사(데이터들의 기본 클래스는 Sprite이기 때문)
+        FDynamicSpriteEmitterReplayDataBase* NewReplayData =
+            static_cast<FDynamicSpriteEmitterReplayDataBase*>(&OutData);
+    }
+
+    return true;
 }
 
 void FParticleEmitterInstance::UpdateTransforms()
@@ -403,55 +438,27 @@ void FParticleEmitterInstance::ApplyWorldOffset(FVector InOffset, bool bWorldShi
 // !NOTE : FMemory 클래스를 만들어야 할 수도 있음
 bool FParticleEmitterInstance::Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount)
 {
-    // 0. 요청된 파티클 수가 음수일 경우 0으로 처리합니다.
-    int32 EffectiveNewMaxActiveParticles = NewMaxActiveParticles;
-    EffectiveNewMaxActiveParticles = FMath::Max(EffectiveNewMaxActiveParticles, 0);
-
-    if (EffectiveNewMaxActiveParticles == MaxActiveParticles)
+    if (NewMaxActiveParticles < 0)
     {
-        return true;
-    }
-
-    size_t NewTotalSizeInBytes = 0; // realloc은 size_t를 인자로 받습니다.
-    if (ParticleStride > 0 && EffectiveNewMaxActiveParticles > 0)
-    {
-        NewTotalSizeInBytes = static_cast<size_t>(EffectiveNewMaxActiveParticles) * static_cast<size_t>(ParticleStride);
-    }
-
-    // 3. 계산된 새로운 총 메모리 크기가 0인 경우 (메모리 해제 요청):
-    if (NewTotalSizeInBytes == 0)
-    {
-        if (ParticleData != nullptr)
-        {
-            free(ParticleData); // 표준 free 함수 사용
-            ParticleData = nullptr;
-        }
-        if (bSetMaxActiveCount)
-        {
-            MaxActiveParticles = 0;
-        }
-        return true; // 메모리 해제는 성공으로 간주합니다.
-    }
-
-    uint8* TempData = static_cast<uint8*>(realloc(ParticleData, NewTotalSizeInBytes));
-
-    if (TempData == nullptr)
-    {
-        // realloc 실패 (요청된 크기가 0보다 큰 경우).
-        // 기존 ParticleData 포인터는 (원래 nullptr이 아니었다면) 여전히 유효하며 내용은 변경되지 않습니다.
-        // MaxActiveParticles도 변경하지 않아 실패한 요청을 반영하지 않습니다.
         return false;
     }
 
-    // realloc 성공.
-    ParticleData = TempData;
-    if (bSetMaxActiveCount)
+    // 파티클 데이터 realloc
+    ParticleData = (uint8*)realloc(ParticleData, ParticleStride * NewMaxActiveParticles);
+    assert(ParticleData);
+
+    if (ParticleIndices == nullptr)
     {
-        MaxActiveParticles = EffectiveNewMaxActiveParticles;
+        MaxActiveParticles = 0;
     }
-    // bSetMaxActiveCount가 false이면, 실제 버퍼 용량이 변경되었음에도 불구하고
-    // MaxActiveParticles는 이전 값을 유지합니다. 이는 bSetMaxActiveCount 플래그의
-    // 의도된 동작일 수 있습니다.
+    ParticleIndices = (uint16*)realloc(ParticleIndices, sizeof(uint16) * (NewMaxActiveParticles + 1));
+
+    for (int32 i = MaxActiveParticles; i < NewMaxActiveParticles; i++)
+    {
+        ParticleIndices[i] = i;
+    }
+
+    MaxActiveParticles = NewMaxActiveParticles;
 
     return true;
 }
@@ -468,6 +475,14 @@ uint8* FParticleEmitterInstance::GetModuleInstanceData(UParticleModule* InModule
         }
     }
     return nullptr;
+}
+
+UMaterial* FParticleEmitterInstance::GetCurrentMaterial()
+{
+    UMaterial* RenderMaterial = CurrentMaterial;
+
+    // !TODO : CurrentMaterial이 null인 경우 기본 머티리얼 할당해주는 로직 추가
+    return RenderMaterial;
 }
 
 void FParticleEmitterInstance::KillParticles()
@@ -540,13 +555,26 @@ void FParticleEmitterInstance::SetupEmitterDuration()
     }
 }
 
-void FParticleSpriteEmitterInstance::InitParameters(UParticleEmitter* InTemplate, UParticleSystemComponent* InComponent)
+FDynamicEmitterDataBase* FParticleEmitterInstance::GetDynamicData()
 {
+    return nullptr;
 }
 
-bool FParticleSpriteEmitterInstance::Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount)
+FDynamicEmitterDataBase* FParticleSpriteEmitterInstance::GetDynamicData()
 {
-    return false;
+
+    UParticleLODLevel* LODLevel = SpriteTemplate->GetCurrentLODLevel(this);
+
+    FDynamicSpriteEmitterData* NewEmitterData = new FDynamicSpriteEmitterData(LODLevel->RequiredModule);
+    if (!FillReplayData(NewEmitterData->Source))
+    {
+        delete NewEmitterData;
+        return nullptr;
+    }
+
+    NewEmitterData->Init();
+
+    return NewEmitterData;
 }
 
 void FParticleMeshEmitterInstance::InitParameters(UParticleEmitter* InTemplate, UParticleSystemComponent* InComponent)
@@ -557,4 +585,21 @@ void FParticleMeshEmitterInstance::InitParameters(UParticleEmitter* InTemplate, 
 bool FParticleMeshEmitterInstance::Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount)
 {
     return false;
+}
+
+bool FParticleMeshEmitterInstance::FillReplayData(FDynamicEmitterReplayDataBase& OutData)
+{
+    if (!FParticleEmitterInstance::FillReplayData(OutData))
+    {
+        return false;
+    }
+
+    OutData.eEmitterType = DET_Sprite;
+
+    FDynamicSpriteEmitterReplayData* NewReplayData = static_cast<FDynamicSpriteEmitterReplayData*>(&OutData);
+
+    // !TODO : material
+    NewReplayData->Material = GetCurrentMaterial();
+
+    return true;
 }

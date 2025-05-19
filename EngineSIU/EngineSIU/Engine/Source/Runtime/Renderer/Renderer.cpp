@@ -22,6 +22,7 @@
 
 #include "CompositingPass.h"
 #include "LightHeatMapRenderPass.h"
+#include "ParticleRenderPass.h"
 #include "PostProcessCompositingPass.h"
 #include "ShadowManager.h"
 #include "ShadowRenderPass.h"
@@ -67,7 +68,7 @@ void FRenderer::Initialize(FGraphicsDevice* InGraphics, FDXDBufferManager* InBuf
     CompositingPass = AddRenderPass<FCompositingPass>();
     PostProcessCompositingPass = AddRenderPass<FPostProcessCompositingPass>();
     SlateRenderPass = AddRenderPass<FSlateRenderPass>();
-
+    ParticleRenderPass = AddRenderPass<FParticleRenderPass>();
     assert(ShadowManager->Initialize(Graphics, BufferManager) && "ShadowManager Initialize Failed");
 
     for (IRenderPass* RenderPass : RenderPasses)
@@ -77,6 +78,7 @@ void FRenderer::Initialize(FGraphicsDevice* InGraphics, FDXDBufferManager* InBuf
     ShadowRenderPass->InitializeShadowManager(ShadowManager);
     StaticMeshRenderPass->InitializeShadowManager(ShadowManager);
     SkeletalMeshRenderPass->InitializeShadowManager(ShadowManager);
+
 }
 
 void FRenderer::Release()
@@ -372,7 +374,10 @@ void FRenderer::RenderWorldScene(const std::shared_ptr<FEditorViewportClient>& V
             StaticMeshRenderPass->Render(Viewport);
         }
     }
-    
+    if (true/*ShowFlag & EEngineShowFlags::SF_Particles*/)
+    {
+        ParticleRenderPass->Render(Viewport);
+    }
     // Render World Billboard
     if (ShowFlag & EEngineShowFlags::SF_BillboardText)
     {

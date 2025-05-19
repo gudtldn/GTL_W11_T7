@@ -36,18 +36,19 @@ public:
     UPROPERTY
     (TArray<UParticleModule*>, Modules)
 
-    // 스폰된 모듈들
+    // 스폰 모듈들. 실제로 파티클을 생성하는 모듈들
     UPROPERTY_WITH_FLAGS(
         Transient | DuplicateTransient,
         TArray<UParticleModule*>, SpawnModules
     )
 
-    // 업데이트 대상  모듈들
+    // 업데이트 대상 모듈들
     UPROPERTY_WITH_FLAGS(
         Transient | DuplicateTransient,
         TArray<UParticleModule*>, UpdateModules
     )
 
+    // Spawning 모듈들. 얼만큼 스폰할지(Spawn할 양, Rate 등)결정하는 모듈들
     UPROPERTY_WITH_FLAGS(
         Transient | DuplicateTransient,
         TArray<UParticleModuleSpawnBase*>, SpawningModules
@@ -57,6 +58,7 @@ public:
     UPROPERTY
     (UParticleModuleSpawn*, SpawnModule, = nullptr;)
 
+    // null일 경우 Sprite.
     UPROPERTY
     (UParticleModuleTypeDataBase*, TypeDataModule, = nullptr;)
 };

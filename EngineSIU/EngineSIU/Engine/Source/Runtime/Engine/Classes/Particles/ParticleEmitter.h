@@ -18,6 +18,7 @@ public:
 
     virtual FParticleEmitterInstance* CreateInstance(UParticleSystemComponent* InComponent);
     UParticleLODLevel* GetCurrentLODLevel(const FParticleEmitterInstance* Instance) const;
+    virtual void UpdateModuleLists();
 
     void Build();
     void CacheEmitterModuleInfo();

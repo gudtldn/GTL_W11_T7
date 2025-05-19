@@ -42,6 +42,7 @@ public:
 
     void SetTemplate(UParticleSystem* InTemplate);
     void ClearDynamicData();
+    void InitTestSpriteParticles();
 
     UPROPERTY(
         EditAnywhere,

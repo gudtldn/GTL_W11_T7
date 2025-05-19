@@ -15,6 +15,7 @@
 #include "D3D11RHI/DXDBufferManager.h"
 
 
+class FParticleRenderPass;
 class IRenderPass;
 class FSkeletalMeshRenderPass;
 class FLightHeatMapRenderPass;
@@ -119,6 +120,7 @@ public:
     
     FSlateRenderPass* SlateRenderPass = nullptr;
 
+    FParticleRenderPass* ParticleRenderPass = nullptr;
 private:
     template <typename RenderPassType>
         requires std::derived_from<RenderPassType, IRenderPass>

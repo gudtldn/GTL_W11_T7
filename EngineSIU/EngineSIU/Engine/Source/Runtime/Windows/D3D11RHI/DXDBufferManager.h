@@ -55,6 +55,8 @@ public:
     HRESULT CreateVertexBufferInternal(const FWString& KeyName, const TArray<T>& Vertices, FVertexInfo& OutVertexInfo,
         D3D11_USAGE Usage, UINT CpuAccessFlags);
 
+    HRESULT CreateDynamicVertexBuffer(const FString& KeyName, UINT ByteSize, FVertexInfo& OutVertexInfo);
+
     HRESULT CreateUnicodeTextBuffer(const FWString& Text, FBufferInfo& OutBufferInfo, float BitmapWidth, float BitmapHeight, float ColCount, float RowCount);
 
     void SetStartUV(wchar_t Hangul, FVector2D& UVOffset);
@@ -90,6 +92,7 @@ public:
     void GetQuadBuffer(FVertexInfo& OutVertexInfo, FIndexInfo& OutIndexInfo);
     void GetTextBuffer(const FWString& Text, FVertexInfo& OutVertexInfo, FIndexInfo& OutIndexInfo);
     void CreateQuadBuffer();
+
 private:
     // 16바이트 정렬
     inline UINT Align16(UINT Size) const { return (Size + 15) & ~15; }

@@ -43,15 +43,15 @@ public:
     uint8 bUpdateModule : 1;
 
     virtual EModuleType GetModuleType() const { return EPMT_General; }
-
+    virtual void PostEditChangeProperty();
     /**
     * 파티클 페이로드 블록의 크기를 반환
     * 
     * @param    TypeData    이 모듈을 소유하고 있는 UParticleModuleTypeDataBase
     * @return   uint32      파티클별 이 모듈이 필요로 하는 바이트의 수
     */
-    virtual uint32 RequiredBytes(UParticleModuleTypeDataBase* TypeData) const { return 0; } // should be overridden by derived classes
-    virtual uint32 RequiredBytesPerInstance() const { return 0; }                           // should be overridden by derived classes
+    virtual uint32 RequiredBytes(UParticleModuleTypeDataBase* TypeData) const;  // should be overridden by derived classes
+    virtual uint32 RequiredBytesPerInstance() const;                            // should be overridden by derived classes
 
     virtual void Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FBaseParticle* ParticleBase);
     virtual void Update(FParticleEmitterInstance* Owner, int32 Offset, float DeltaTime);

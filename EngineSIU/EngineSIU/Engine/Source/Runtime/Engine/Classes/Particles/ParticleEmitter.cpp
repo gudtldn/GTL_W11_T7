@@ -18,6 +18,19 @@ UParticleLODLevel* UParticleEmitter::GetCurrentLODLevel(const FParticleEmitterIn
     return Instance->CurrentLODLevel;
 }
 
+void UParticleEmitter::UpdateModuleLists()
+{
+    for (int32 LODIndex = 0; LODIndex < LODLevels.Num(); LODIndex++)
+    {
+        UParticleLODLevel* LODLevel = LODLevels[LODIndex];
+        if (LODLevel)
+        {
+            LODLevel->UpdateModuleLists();
+        }
+    }
+    Build();
+}
+
 void UParticleEmitter::Build()
 {
     CacheEmitterModuleInfo();

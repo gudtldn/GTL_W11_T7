@@ -1,5 +1,34 @@
 {
-    "Actors": [],
+    "Actors": [
+        {
+            "ActorClass": "AParticleSystemActor",
+            "ActorID": "AParticleSystemActor_187",
+            "ActorLabel": "OBJ_PARTICLE_SPRITE_187",
+            "ActorTickInEditor": "false",
+            "Components": [
+                {
+                    "ComponentClass": "UParticleSystemComponent",
+                    "ComponentID": "ParticleSystemComponent_0",
+                    "Properties": {
+                        "AABB_max": "X=0.000 Y=0.000 Z=0.000",
+                        "AABB_min": "X=0.000 Y=0.000 Z=0.000",
+                        "AttachParentID": "nullptr",
+                        "ComponentClass": "UParticleSystemComponent",
+                        "ComponentName": "ParticleSystemComponent_0",
+                        "ComponentOwner": "AParticleSystemActor_187",
+                        "ComponentOwnerClass": "AParticleSystemActor",
+                        "RelativeLocation": "X=0.000 Y=0.000 Z=0.000",
+                        "RelativeRotation": "Pitch=0.000 Yaw=0.000 Roll=0.000",
+                        "RelativeScale3D": "X=1.000 Y=1.000 Z=1.000",
+                        "bAutoActive": "true",
+                        "bIsActive": "true",
+                        "m_Type": ""
+                    }
+                }
+            ],
+            "RootComponentID": "ParticleSystemComponent_0"
+        }
+    ],
     "NextUUID": 0,
     "Version": 1
 }

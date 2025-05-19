@@ -8,10 +8,13 @@ class UParticleSystemComponent;
 class UParticleLODLevel;
 class UParticleModule;
 class UParticleModuleTypeDataMesh;
+class UMaterial;
 
 struct FBaseParticle;
 struct FVector;
 struct FDynamicEmitterReplayDataBase;
+struct FDynamicEmitterDataBase;
+
 
 
 struct FParticleEmitterInstance
@@ -81,6 +84,9 @@ struct FParticleEmitterInstance
     /** 시뮬레이션 공간에서 월드 공간으로 변환하는 트랜스폼 행렬. */
     FMatrix SimulationToWorld = FMatrix::Identity;
 
+    /** 현재 사용중인 머티리얼. */
+    UMaterial* CurrentMaterial = nullptr;
+
     FParticleEmitterInstance() = default;
     virtual ~FParticleEmitterInstance() = default;
 
@@ -110,6 +116,7 @@ struct FParticleEmitterInstance
     virtual void PostSpawn(FBaseParticle* Particle, float InterpolationPercentage, float SpawnTime);
 
     // DynamicData
+    virtual FDynamicEmitterDataBase* GetDynamicData();
     virtual bool FillReplayData(FDynamicEmitterReplayDataBase& OutData);
 
     void UpdateTransforms();
@@ -117,6 +124,8 @@ struct FParticleEmitterInstance
     virtual void ApplyWorldOffset(FVector InOffset, bool bWorldShift);
     virtual bool Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount);
     uint8* GetModuleInstanceData(UParticleModule* InModule) const;
+
+    UMaterial* GetCurrentMaterial();
 
     void KillParticles();
     void KillParticle(int32 Index);
@@ -126,9 +135,7 @@ struct FParticleEmitterInstance
 
 struct FParticleSpriteEmitterInstance : public FParticleEmitterInstance
 {
-
-    virtual void InitParameters(UParticleEmitter* InTemplate, UParticleSystemComponent* InComponent) override;
-    virtual bool Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount = true) override;
+    virtual FDynamicEmitterDataBase* GetDynamicData() override;
     // !TODO : FParticleSpriteEmitterInstance에 필요한 데이터들 추가
     // !TODO : FParticleSpriteEmitterInstance에 필요한 함수들 추가
 };
@@ -139,6 +146,8 @@ struct FParticleMeshEmitterInstance : public FParticleEmitterInstance
 
     virtual void InitParameters(UParticleEmitter* InTemplate, UParticleSystemComponent* InComponent) override;
     virtual bool Resize(int32 NewMaxActiveParticles, bool bSetMaxActiveCount = true) override;
+protected:
+    virtual bool FillReplayData(FDynamicEmitterReplayDataBase& OutData);
     // !TODO : FParticleMeshEmitterInstance에 필요한 데이터들 추가
     // !TODO : FParticleMeshEmitterInstance에 필요한 함수들 추가
 };

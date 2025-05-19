@@ -3,6 +3,8 @@
 #include <codecvt>
 #include <locale>
 
+#include "Particles/ParticleHelper.h"
+
 void FDXDBufferManager::Initialize(ID3D11Device* InDXDevice, ID3D11DeviceContext* InDXDeviceContext)
 {
     DXDevice = InDXDevice;
@@ -148,6 +150,35 @@ void FDXDBufferManager::CreateQuadBuffer()
 
     FIndexInfo IndexInfo;
     CreateIndexBuffer(TEXT("QuadBuffer"), Indices, IndexInfo);
+}
+HRESULT FDXDBufferManager::CreateDynamicVertexBuffer(const FString& KeyName, UINT ByteSize, FVertexInfo& OutVertexInfo)
+{
+    if (VertexBufferPool.Contains(KeyName))
+    {
+        OutVertexInfo = VertexBufferPool[KeyName];
+        return S_OK;
+    }
+
+    D3D11_BUFFER_DESC BufferDesc = {};
+    BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    BufferDesc.ByteWidth = ByteSize;
+    BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    ID3D11Buffer* NewBuffer = nullptr;
+    const HRESULT Result = DXDevice->CreateBuffer(&BufferDesc, nullptr, &NewBuffer);
+    if (FAILED(Result))
+    {
+        UE_LOG(ELogLevel::Error, TEXT("CreateDynamicVertexBuffer failed: %s"), *KeyName);
+        return Result;
+    }
+
+    OutVertexInfo.NumVertices = 0; // 동적 버퍼는 런타임에 채워짐
+    OutVertexInfo.Stride = 0;      // 나중에 DrawInstanced 할 때 stride 따로 지정
+    OutVertexInfo.VertexBuffer = NewBuffer;
+    VertexBufferPool.Add(KeyName, OutVertexInfo);
+
+    return S_OK;
 }
 
 void FDXDBufferManager::GetQuadBuffer(FVertexInfo& OutVertexInfo, FIndexInfo& OutIndexInfo)
