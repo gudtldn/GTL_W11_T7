@@ -3,6 +3,7 @@
 #include "NameTypes.h"
 #include "Misc/CoreMiscDefines.h"
 
+struct FPropertyChangedEvent;
 extern FEngineLoop GEngineLoop;
 
 class UClass;
@@ -50,6 +51,12 @@ public:
      * 이 시점에서는 아직 직렬화나 기타 설정 작업이 수행되기 전입니다.
      */
     virtual void PostInitProperties();
+
+    /**
+     * 이 객체의 프로퍼티 중 하나가 에디터 등 외부 요인에 의해 변경된 후 호출됩니다.
+     * @param PropertyChangedEvent 변경된 프로퍼티에 대한 정보를 담고 있습니다.
+     */
+    virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 
     UObject* GetOuter() const { return OuterPrivate; }
     virtual UWorld* GetWorld() const;

@@ -39,6 +39,10 @@ void UObject::PostInitProperties()
 {
 }
 
+void UObject::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+}
+
 void UObject::Serialize(FArchive& Ar)
 {
     // TODO: Serialize 구현
