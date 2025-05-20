@@ -20,7 +20,7 @@ struct FPropertyChangedEvent
     FProperty* Property = nullptr;
 
     // 만약 Property가 구조체나 배열이고, 그 내부 멤버가 변경된 경우 해당 멤버 FProperty
-    FProperty* MemberProperty = nullptr;
+    // FProperty* MemberProperty = nullptr;
 
     // (예: Transform.Location.X -> Property는 Transform, MemberProperty는 Location의 X)
     // (구현 복잡도에 따라 이 부분은 단순화하거나 확장 가능)
@@ -30,7 +30,7 @@ struct FPropertyChangedEvent
 
     EPropertyChangeType ChangeType = EPropertyChangeType::ValueSet;
 
-    int32 ArrayIndices[2] = {-1, -1}; // 배열 변경 시 인덱스 정보 (예: 추가된 위치, 삭제된 위치 범위)
+    // int32 ArrayIndices[2] = {-1, -1}; // 배열 변경 시 인덱스 정보 (예: 추가된 위치, 삭제된 위치 범위)
 
 public:
     FPropertyChangedEvent(FProperty* InProperty, UObject* InObjectThatChanged, EPropertyChangeType InChangeType = EPropertyChangeType::ValueSet)
