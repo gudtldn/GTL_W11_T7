@@ -2,9 +2,11 @@
 #include <variant>
 #include <optional>
 
+#include "PropertyEvent.h"
 #include "PropertyTypes.h"
 #include "Struct.h"
 #include "Container/Queue.h"
+#include "Misc/Optional.h"
 #include "Templates/TemplateUtilities.h"
 #include "Templates/TypeUtilities.h"
 
@@ -53,8 +55,9 @@ public:
      * ImGui를 통해 주어진 Raw Data를 표시합니다.
      * @param PropertyLabel 표시할 프로퍼티의 레이블
      * @param DataPtr 표시할 Raw Data의 포인터
+     * @param OwnerObject Data를 가지고 있는 Object
      */
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const;
 
     /** 런타임에 타입 정보를 검사하고 업데이트 합니다. */
     virtual void Resolve();
@@ -182,7 +185,7 @@ struct FInt8Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FInt16Property : public FNumericProperty
@@ -198,7 +201,7 @@ struct FInt16Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FInt32Property : public FNumericProperty
@@ -214,7 +217,7 @@ struct FInt32Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FInt64Property : public FNumericProperty
@@ -230,7 +233,7 @@ struct FInt64Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FUInt8Property : public FNumericProperty
@@ -246,7 +249,7 @@ struct FUInt8Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FUInt16Property : public FNumericProperty
@@ -262,7 +265,7 @@ struct FUInt16Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FUInt32Property : public FNumericProperty
@@ -278,7 +281,7 @@ struct FUInt32Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FUInt64Property : public FNumericProperty
@@ -294,7 +297,7 @@ struct FUInt64Property : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FFloatProperty : public FNumericProperty
@@ -310,7 +313,7 @@ struct FFloatProperty : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FDoubleProperty : public FNumericProperty
@@ -326,7 +329,7 @@ struct FDoubleProperty : public FNumericProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FBoolProperty : public FProperty
@@ -343,7 +346,7 @@ struct FBoolProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FStrProperty : public FProperty
@@ -360,7 +363,7 @@ struct FStrProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FNameProperty : public FProperty
@@ -375,7 +378,7 @@ struct FNameProperty : public FProperty
         : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Name, InSize, InOffset, InFlags)
     {}
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FVector2DProperty : public FProperty
@@ -392,7 +395,7 @@ struct FVector2DProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FVectorProperty : public FProperty
@@ -409,7 +412,7 @@ struct FVectorProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FVector4Property : public FProperty
@@ -426,7 +429,7 @@ struct FVector4Property : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FRotatorProperty : public FProperty
@@ -443,7 +446,7 @@ struct FRotatorProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FQuatProperty : public FProperty
@@ -460,7 +463,7 @@ struct FQuatProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FTransformProperty : public FProperty
@@ -476,7 +479,7 @@ struct FTransformProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FMatrixProperty : public FProperty
@@ -492,7 +495,7 @@ struct FMatrixProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FColorProperty : public FProperty
@@ -509,7 +512,7 @@ struct FColorProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FLinearColorProperty : public FProperty
@@ -526,7 +529,7 @@ struct FLinearColorProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 template <typename InArrayType>
@@ -547,9 +550,9 @@ struct TArrayProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override
     {
-        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr, OwnerObject);
 
         enum class EArrayElementOption : uint8
         {
@@ -562,6 +565,7 @@ struct TArrayProperty : public FProperty
         {
             ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
+                TOptional<FPropertyChangedEvent> Event;
                 TArray<ElementType>* Data = static_cast<TArray<ElementType>*>(DataPtr);
 
                 const ImGuiIO& IO = ImGui::GetIO();
@@ -574,6 +578,7 @@ struct TArrayProperty : public FProperty
                 if (ImGui::Button("\ue9c8"))
                 {
                     Data->AddDefaulted();
+                    Event = FPropertyChangedEvent{const_cast<TArrayProperty*>(this), OwnerObject, EPropertyChangeType::ArrayAdd};
                 }
                 ImGui::PopFont();
                 ImGui::SetItemTooltip("Add Element");
@@ -583,6 +588,7 @@ struct TArrayProperty : public FProperty
                 if (ImGui::Button("\ue9f6"))
                 {
                     Data->Empty();
+                    Event = FPropertyChangedEvent{const_cast<TArrayProperty*>(this), OwnerObject, EPropertyChangeType::ArrayClear};
                 }
                 ImGui::PopFont();
                 ImGui::SetItemTooltip("Remove All Elements");
@@ -590,7 +596,7 @@ struct TArrayProperty : public FProperty
                 TQueue<TPair<EArrayElementOption, int32>> OptionQueue;
                 for (int32 Index = 0; Index < Data->Num(); ++Index)
                 {
-                    ElementProperty->DisplayRawDataInImGui(std::format("Idx [{}]", Index).c_str(), &((*Data)[Index]));
+                    ElementProperty->DisplayRawDataInImGui(std::format("Idx [{}]", Index).c_str(), &((*Data)[Index]), OwnerObject);
 
                     std::string PopupLabel = std::format("ArrayElementOption##{}", Index);
                     ImGui::SameLine();
@@ -604,14 +610,17 @@ struct TArrayProperty : public FProperty
                         if (ImGui::Selectable("Insert"))
                         {
                             OptionQueue.Enqueue(MakePair(EArrayElementOption::Insert, Index));
+                            Event = FPropertyChangedEvent{const_cast<TArrayProperty*>(this), OwnerObject, EPropertyChangeType::ArrayAdd};
                         }
                         else if (ImGui::Selectable("Remove"))
                         {
                             OptionQueue.Enqueue(MakePair(EArrayElementOption::Remove, Index));
+                            Event = FPropertyChangedEvent{const_cast<TArrayProperty*>(this), OwnerObject, EPropertyChangeType::ArrayRemove};
                         }
                         else if (ImGui::Selectable("Duplicate"))
                         {
                             OptionQueue.Enqueue(MakePair(EArrayElementOption::Duplicate, Index));
+                            Event = FPropertyChangedEvent{const_cast<TArrayProperty*>(this), OwnerObject, EPropertyChangeType::ArrayAdd};
                         }
                         ImGui::EndPopup();
                     }
@@ -640,6 +649,11 @@ struct TArrayProperty : public FProperty
                         break;
                     }
                 }
+
+                if (Event)
+                {
+                    OwnerObject->PostEditChangeProperty(*Event);
+                }
             }
             ImGui::EndDisabled();
             ImGui::TreePop();
@@ -667,9 +681,9 @@ struct TMapProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override
     {
-        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr, OwnerObject);
 
         enum class EMapElementOption : uint8
         {
@@ -682,6 +696,9 @@ struct TMapProperty : public FProperty
         {
             ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
+                // TODO: 나중에 추가
+                [[maybe_unused]] TOptional<FPropertyChangedEvent> Event;
+
                 const ImGuiIO& IO = ImGui::GetIO();
                 ImFont* IconFont = IO.Fonts->Fonts[1]; // FEATHER_FONT = 1
 
@@ -760,7 +777,7 @@ struct TMapProperty : public FProperty
                         if (ImGui::TreeNode(std::format("Key ({})", KeyTypeName).c_str()))
                         {
                             // TODO: 겹치는 Key에 대해서는 나중에 수정해야함
-                            KeyProperty->DisplayRawDataInImGui("", &const_cast<KeyType&>(Pair.Key));
+                            KeyProperty->DisplayRawDataInImGui("", &const_cast<KeyType&>(Pair.Key), OwnerObject);
                             ImGui::TreePop();
                         }
 
@@ -768,7 +785,7 @@ struct TMapProperty : public FProperty
                         std::string ValueTypeName = std::string(ValueTypeNameView);
                         if (ImGui::TreeNode(std::format("Value ({})", ValueTypeName).c_str()))
                         {
-                            ValueProperty->DisplayRawDataInImGui("##Value", &Pair.Value);
+                            ValueProperty->DisplayRawDataInImGui("##Value", &Pair.Value, OwnerObject);
                             ImGui::TreePop();
                         }
 
@@ -818,9 +835,9 @@ struct TSetProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override
     {
-        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr, OwnerObject);
 
         enum class ESetElementOption : uint8
         {
@@ -833,6 +850,9 @@ struct TSetProperty : public FProperty
         {
             ImGui::BeginDisabled(HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere));
             {
+                // TODO: 나중에 추가
+                [[maybe_unused]] TOptional<FPropertyChangedEvent> Event;
+
                 const ImGuiIO& IO = ImGui::GetIO();
                 ImFont* IconFont = IO.Fonts->Fonts[1]; // FEATHER_FONT = 1
     
@@ -883,7 +903,7 @@ struct TSetProperty : public FProperty
                     ImGui::PushID(&Element);
 
                     // TODO: 겹치는 Key에 대해서는 나중에 수정해야함
-                    ElementProperty->DisplayRawDataInImGui(std::format("Elem [{}]", Idx).c_str(), &const_cast<ElementType&>(Element));
+                    ElementProperty->DisplayRawDataInImGui(std::format("Elem [{}]", Idx).c_str(), &const_cast<ElementType&>(Element), OwnerObject);
 
                     std::string PopupLabel = std::format("SetElementOption##{}", Idx);
                     ImGui::SameLine();
@@ -951,9 +971,9 @@ struct TEnumProperty : public FProperty
         ImGui::EndDisabled();
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override
     {
-        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+        FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr, OwnerObject);
 
         EnumType* Data = static_cast<EnumType*>(DataPtr);
         constexpr auto EnumEntries = magic_enum::enum_entries<EnumType>();
@@ -972,6 +992,11 @@ struct TEnumProperty : public FProperty
                 if (ImGui::Selectable(EnumName.c_str(), bIsSelected))
                 {
                     *Data = Enum;
+                    if (IsValid(OwnerObject))
+                    {
+                        FPropertyChangedEvent Event{const_cast<TEnumProperty*>(this), OwnerObject, EPropertyChangeType::ValueSet};
+                        OwnerObject->PostEditChangeProperty(Event);
+                    }
                 }
                 if (bIsSelected)
                 {
@@ -997,7 +1022,7 @@ struct FSubclassOfProperty : public FProperty
     }
 
     virtual void DisplayInImGui(UObject* Object) const override;
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FObjectProperty : public FProperty
@@ -1013,7 +1038,7 @@ struct FObjectProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FStructProperty : public FProperty
@@ -1029,7 +1054,7 @@ struct FStructProperty : public FProperty
     {
     }
 
-    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr, UObject* OwnerObject) const override;
 };
 
 struct FUnresolvedPtrProperty : public FProperty
