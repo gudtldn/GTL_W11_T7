@@ -19,6 +19,10 @@ public:
     virtual void Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FBaseParticle* ParticleBase) override;
     void SpawnEx(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, struct FRandomStream* InRandomStream, FBaseParticle* ParticleBase);
 
+    virtual void PostInitProperties() override;
+    void InitializeDefaults();
+
+
     virtual FName GetModuleName() const override
     {
         return FName(TEXT("Initial Lifetime"));

@@ -1,6 +1,9 @@
 #include "ParticleModuleLifetime.h"
 #include "Particles/ParticleEmitterInstances.h"
 #include "Particles/ParticleHelper.h"
+#include "UObject/ObjectFactory.h"
+#include <Distributions/DistributionFloatUniform.h>
+
 
 UParticleModuleLifetime::UParticleModuleLifetime()
 {
@@ -30,5 +33,21 @@ void UParticleModuleLifetime::SpawnEx(FParticleEmitterInstance* Owner, int32 Off
 
     Particle.RelativeTime = Particle.RelativeTime > 1.0f ? Particle.RelativeTime : SpawnTime * Particle.OneOverMaxLifetime;
     //UE_LOG(ELogLevel::Warning, "OneOverMaxLifeTime : %f, RelativeTime : %f", Particle.OneOverMaxLifetime, Particle.RelativeTime);
+}
+
+void UParticleModuleLifetime::PostInitProperties()
+{
+    Super::PostInitProperties();
+    InitializeDefaults();
+    bEnabled = true;
+}
+
+void UParticleModuleLifetime::InitializeDefaults()
+{
+    if (!LifeTime.IsCreated())
+    {
+        LifeTime.Distribution = 
+            FObjectFactory::ConstructObject<UDistributionFloatUniform>(this, TEXT("DistributionLifetime"));
+    }
 }
 

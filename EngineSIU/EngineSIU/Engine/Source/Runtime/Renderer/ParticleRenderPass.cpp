@@ -382,23 +382,26 @@ void FParticleRenderPass::RenderMeshEmitter(
         }
 
         // [2] 텍스처 바인딩
-        const TArray<FTextureInfo>& TextureInfos = RenderData->Materials[Subset.MaterialIndex].TextureInfos;
-        ID3D11ShaderResourceView* SRVs[9] = {};
-        ID3D11SamplerState* Samplers[9] = {};
-
-        if (TextureInfos.IsValidIndex(0))
+        if (RenderData->Materials.IsValidIndex(Subset.MaterialIndex))
         {
-            const FWString& TexturePath = TextureInfos[0].TexturePath;
-            std::shared_ptr<FTexture> Texture = FEngineLoop::ResourceManager.GetTexture(TexturePath);
-            if (Texture)
-            {
-                SRVs[0] = Texture->TextureSRV;
-                Samplers[0] = Texture->SamplerState;
-            }
-        }
+            const TArray<FTextureInfo>& TextureInfos = RenderData->Materials[Subset.MaterialIndex].TextureInfos;
+            ID3D11ShaderResourceView* SRVs[9] = {};
+            ID3D11SamplerState* Samplers[9] = {};
 
-        Graphics->DeviceContext->PSSetShaderResources(0, 9, SRVs);
-        Graphics->DeviceContext->PSSetSamplers(0, 9, Samplers);
+            if (TextureInfos.IsValidIndex(0))
+            {
+                const FWString& TexturePath = TextureInfos[0].TexturePath;
+                std::shared_ptr<FTexture> Texture = FEngineLoop::ResourceManager.GetTexture(TexturePath);
+                if (Texture)
+                {
+                    SRVs[0] = Texture->TextureSRV;
+                    Samplers[0] = Texture->SamplerState;
+                }
+            }
+
+            Graphics->DeviceContext->PSSetShaderResources(0, 9, SRVs);
+            Graphics->DeviceContext->PSSetSamplers(0, 9, Samplers);
+        }
 
         // [3] 인덱싱된 인스턴스 드로우
         const UINT StartIndexLocation = Subset.IndexStart;

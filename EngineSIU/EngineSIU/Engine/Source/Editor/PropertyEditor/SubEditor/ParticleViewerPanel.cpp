@@ -333,7 +333,7 @@ void ParticleViewerPanel::CreateNewParticleSystem(const FString& Name)
 {
     auto& ParticleSystemMap = UAssetManager::Get().GetParticleSystemMap();
 
-    ParticleSystem = FObjectFactory::ConstructObject<UParticleSystem>(ParticleSystemComponent);
+    ParticleSystem = FObjectFactory::ConstructObject<UParticleSystem>(ParticleSystemComponent, Name);
     UParticleEmitter* NewEmitter = CreateDefaultParticleEmitter();
     ParticleSystem->Emitters.Add(NewEmitter);
     ParticleSystem->PostEditChangeProperty();
