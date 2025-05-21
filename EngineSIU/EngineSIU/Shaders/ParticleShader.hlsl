@@ -121,11 +121,6 @@ VS_OUTPUT mainVS(VS_INPUT input)
     // 보간용 UV 두 개를 넘김 (PixelShader에서 보간)
     output.UV.xy = UV0; // TEXCOORD0.xy
     output.UV.zw = UV1; // TEXCOORD0.zw (pack)
-    output.Color = input.Color;
-    if (all(input.Color.rgb < 0.001f))
-        output.Color.rgb = float3(1, 1, 1);
-    if (input.Color.a<0.001f)
-        output.Color.a = 1;
     output.LerpAlpha = LerpAlpha;
 #endif
 
@@ -135,10 +130,14 @@ VS_OUTPUT mainVS(VS_INPUT input)
     float4 viewPos = mul(worldPos, ViewMatrix);
     output.Position = mul(viewPos, ProjectionMatrix);
     output.WorldPos = worldPos.xyz;
-    output.Color = input.Color;
     output.UV = input.UV.xyxy;
 #endif
-
+    
+    output.Color = input.Color;
+    if (all(input.Color.rgb < 0.001f))
+        output.Color.rgb = float3(1, 1, 1);
+    if (input.Color.a < 0.001f)
+        output.Color.a = 1;
     return output;
 }
 
