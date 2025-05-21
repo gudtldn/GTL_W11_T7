@@ -4,20 +4,6 @@
 
 void UParticleModuleSubUV::Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FBaseParticle* ParticleBase)
 {
-    //UParticleLODLevel* LODLevel = Owner->SpriteTemplate->GetCurrentLODLevel(Owner);
-    //const int32 PayloadOffset = Owner->SubUVDataOffset;
-
-    //SPAWN_INIT;
-    //{
-    //    int32 TempOffset = CurrentOffset;
-    //    CurrentOffset = PayloadOffset;
-    //    PARTICLE_ELEMENT(FSubUVPayload, SubUVPayload);
-    //    CurrentOffset = TempOffset;
-
-    //    SubUVPayload.SubImages_Horizontal = SubImages_Horizontal;
-    //    SubUVPayload.SubImages_Vertical = SubImages_Vertical;
-    //}
-
     Owner->SubImages_Horizontal = SubImages_Horizontal;
     Owner->SubImages_Vertical = SubImages_Vertical;
 }
@@ -31,4 +17,9 @@ void UParticleModuleSubUV::PostInitProperties()
 void UParticleModuleSubUV::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
     
+}
+
+FName UParticleModuleSubUV::GetModuleName() const
+{
+    return FName(TEXT("SubUV"));
 }

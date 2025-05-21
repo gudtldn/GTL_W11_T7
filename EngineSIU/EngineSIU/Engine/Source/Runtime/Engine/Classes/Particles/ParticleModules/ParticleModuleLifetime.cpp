@@ -11,16 +11,21 @@ UParticleModuleLifetime::UParticleModuleLifetime()
 
 void UParticleModuleLifetime::Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FBaseParticle* ParticleBase)
 {
+    SpawnEx(Owner, Offset, SpawnTime, &GetRandomStream(Owner), ParticleBase);
+}
+
+void UParticleModuleLifetime::SpawnEx(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FRandomStream* InRandomStream, FBaseParticle* ParticleBase)
+{
     SPAWN_INIT;
 
+    float MaxLifeTime = LifeTime.GetValue(Owner->EmitterTime, (UObject*)Owner->Component, InRandomStream);
     if (Particle.OneOverMaxLifetime > 0.f)
     {
-        Particle.OneOverMaxLifetime = 1.f / (MaxLifetime + 1.f / Particle.OneOverMaxLifetime);
+        Particle.OneOverMaxLifetime = 1.f / (MaxLifeTime + 1.f / Particle.OneOverMaxLifetime);
     }
     else
     {
-        float time = FMath::Lerp(MinLifetime, MaxLifetime, FMath::FRand());
-        Particle.OneOverMaxLifetime = MaxLifetime > 0.f ? 1.f / time : 0.f;
+        Particle.OneOverMaxLifetime = MaxLifeTime > 0.f ? 1.f / MaxLifeTime : 0.f;
     }
 
     Particle.RelativeTime = Particle.RelativeTime > 1.0f ? Particle.RelativeTime : SpawnTime * Particle.OneOverMaxLifetime;
