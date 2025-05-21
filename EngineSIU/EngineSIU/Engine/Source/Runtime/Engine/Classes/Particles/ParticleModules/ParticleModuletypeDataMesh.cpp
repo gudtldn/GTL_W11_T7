@@ -7,7 +7,8 @@
 FParticleEmitterInstance* UParticleModuleTypeDataMesh::CreateInstance(UParticleEmitter* InEmitterParent, UParticleSystemComponent* InComponent)
 {
     // !TODO : 기본 메시 세팅
-    Mesh = FObjManager::GetStaticMesh(L"Contents/Reference/Reference.obj");
+    if(!Mesh)
+        Mesh = FObjManager::GetStaticMesh(L"Contents/Reference/Reference.obj");
 
     FParticleMeshEmitterInstance* Instance = new FParticleMeshEmitterInstance();
     Instance->MeshTypeData = this;
