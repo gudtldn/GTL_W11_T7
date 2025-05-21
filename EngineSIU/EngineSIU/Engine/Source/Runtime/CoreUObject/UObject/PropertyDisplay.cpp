@@ -642,18 +642,25 @@ void FObjectProperty::DisplayRawDataInImGui_Implement(const char* PropertyLabel,
 
     if (ImGui::TreeNodeEx(PropertyLabel, ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
     {
-        const UClass* ObjectClass = GetSpecificClass();
-        assert(ObjectClass);
-
         UObject** Object = static_cast<UObject**>(DataPtr);
+        const UClass* ObjectClass = IsValid(*Object) ? (*Object)->GetClass() : nullptr;
 
         // 포인터가 가리키는 객체를 수정, 여기서는 UObject의 인스턴스
         if (HasAnyFlags(Flags, EPropertyFlags::EditAnywhere))
         {
-            TArray<UObject*> ChildObjects;
-            GetObjectsOfClass(ObjectClass, ChildObjects, true);
+            const UClass* SpecificClass = GetSpecificClass();
+            assert(SpecificClass);
 
-            if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), (*Object)->GetName().ToAnsiString().c_str()))
+            TArray<UObject*> ChildObjects;
+            GetObjectsOfClass(SpecificClass, ChildObjects, true);
+
+            std::string PreviewName = "None";
+            if (IsValid(*Object))
+            {
+                PreviewName = (*Object)->GetName().ToAnsiString();
+            }
+
+            if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), PreviewName.c_str()))
             {
                 for (UObject* ChildObject : ChildObjects)
                 {
