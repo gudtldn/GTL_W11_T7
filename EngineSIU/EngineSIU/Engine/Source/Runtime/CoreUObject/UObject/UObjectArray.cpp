@@ -13,6 +13,8 @@ void FUObjectArray::AddObject(UObject* Object)
 
 void FUObjectArray::MarkRemoveObject(UObject* Object)
 {
+    if (!IsValid(Object)) return;
+
     ObjObjects.Remove(Object);
     RemoveFromClassMap(Object);  // UObjectHashTable에서 Object를 제외
     PendingDestroyObjects.AddUnique(Object);

@@ -156,14 +156,15 @@ consteval EPropertyType GetPropertyType()
 
 enum EPropertyFlags : uint32  // NOLINT(performance-enum-size)
 {
-    PropertyNone = 0,            // 플래그 없음
-    VisibleAnywhere = 1 << 0,    // ImGui에서 읽기 전용으로 표시
-    EditAnywhere = 1 << 1,       // ImGui에서 읽기/쓰기 가능
-    LuaReadOnly = 1 << 2,        // Lua에 읽기 전용으로 바인딩
-    LuaReadWrite = 1 << 3,       // Lua에 읽기/쓰기로 바인딩
-    BitField = 1 << 4,           // BitField인 경우
-    Transient = 1 << 5,          // 휘발성 변수인 경우 (이 값은 저장이 안됨)
-    DuplicateTransient = 1 << 6, // Duplicate할 때 기본값으로 복제
+    PropertyNone       = 0,       // 플래그 없음
+    VisibleAnywhere    = 1 << 0,  // ImGui에서 읽기 전용으로 표시
+    EditAnywhere       = 1 << 1,  // ImGui에서 읽기/쓰기 가능
+    EditInline         = 1 << 2,  // ImGui에서 Edit과 동시에 Inline으로 Object의 Property까지 표시
+    LuaReadOnly        = 1 << 3,  // Lua에 읽기 전용으로 바인딩
+    LuaReadWrite       = 1 << 4,  // Lua에 읽기/쓰기로 바인딩
+    BitField           = 1 << 5,  // BitField인 경우
+    Transient          = 1 << 6,  // 휘발성 변수인 경우 (이 값은 저장이 안됨)
+    DuplicateTransient = 1 << 7,  // Duplicate할 때 기본값으로 복제
     // ... 필요한 다른 플래그들 (예: SaveGame, Replicated 등)
 };
 

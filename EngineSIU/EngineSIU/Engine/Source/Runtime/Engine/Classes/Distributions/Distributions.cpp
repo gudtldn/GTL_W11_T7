@@ -797,16 +797,16 @@ void FRawDistribution::GetValue3Random(float Time, float* InValue, FRandomStream
     RandValues[2] = DIST_GET_RANDOM_VALUE(InRandomStream);
     switch (static_cast<EDistributionVectorLockFlags>(LookupTable.LockFlag))
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         RandValues.Y = RandValues.X;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         RandValues.Z = RandValues.X;
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         RandValues.Z = RandValues.Y;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         RandValues.Y = RandValues.X;
         RandValues.Z = RandValues.X;
         break;
@@ -853,6 +853,14 @@ bool FRawDistributionVector::IsCreated()
 }
 
 #if WITH_EDITOR
+FRawDistributionVector::~FRawDistributionVector()
+{
+    if (IsValid(Distribution))
+    {
+        Distribution->MarkAsGarbage();
+    }
+}
+
 void FRawDistributionVector::Initialize()
 {
     // Nothing to do if we don't have a distribution.
@@ -1021,6 +1029,12 @@ void UDistributionVector::GetRange(FVector& OutMin, FVector& OutMax) const
     OutMax = FVector::ZeroVector;
 }
 
+void UDistributionVector::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+    bIsDirty = true;
+}
+
 void UDistributionVectorUniform::PostInitProperties()
 {
     Super::PostInitProperties();
@@ -1064,7 +1078,7 @@ FVector UDistributionVectorUniform::GetValue(float F, UObject* Data, int32 Extre
 
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         if (bUseExtremes)
         {
             if (bMin)
@@ -1085,7 +1099,7 @@ FVector UDistributionVectorUniform::GetValue(float F, UObject* Data, int32 Extre
         }
         fY = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         if (bUseExtremes)
         {
             if (bMin)
@@ -1106,7 +1120,7 @@ FVector UDistributionVectorUniform::GetValue(float F, UObject* Data, int32 Extre
         }
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         if (bUseExtremes)
         {
             if (bMin)
@@ -1127,7 +1141,7 @@ FVector UDistributionVectorUniform::GetValue(float F, UObject* Data, int32 Extre
         }
         fZ = fY;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         if (bUseExtremes)
         {
             if (bMin)
@@ -1146,7 +1160,7 @@ FVector UDistributionVectorUniform::GetValue(float F, UObject* Data, int32 Extre
         fY = fX;
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_None:
+    case EDistributionVectorLockFlags::None:
     default:
         if (bUseExtremes)
         {
@@ -1235,27 +1249,27 @@ FVector UDistributionVectorUniform::GetMinValue() const
 
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         fX = LocalMin.X;
         fY = LocalMin.X;
         fZ = LocalMin.Z;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         fX = LocalMin.X;
         fY = LocalMin.Y;
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         fX = LocalMin.X;
         fY = LocalMin.Y;
         fZ = fY;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         fX = LocalMin.X;
         fY = fX;
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_None:
+    case EDistributionVectorLockFlags::None:
     default:
         fX = LocalMin.X;
         fY = LocalMin.Y;
@@ -1276,27 +1290,27 @@ FVector UDistributionVectorUniform::GetMaxValue() const
 
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         fX = LocalMax.X;
         fY = LocalMax.X;
         fZ = LocalMax.Z;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         fX = LocalMax.X;
         fY = LocalMax.Y;
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         fX = LocalMax.X;
         fY = LocalMax.Y;
         fZ = fY;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         fX = LocalMax.X;
         fY = fX;
         fZ = fX;
         break;
-    case EDistributionVectorLockFlags::EDVLF_None:
+    case EDistributionVectorLockFlags::None:
     default:
         fX = LocalMax.X;
         fY = LocalMax.Y;
@@ -1316,11 +1330,11 @@ int32 UDistributionVectorUniform::GetNumSubCurves() const
 {
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
-    case EDistributionVectorLockFlags::EDVLF_XZ:
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::XY:
+    case EDistributionVectorLockFlags::XZ:
+    case EDistributionVectorLockFlags::YZ:
         return 4;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         return 2;
     }
     return 6;
@@ -1416,20 +1430,20 @@ float UDistributionVectorUniform::GetKeyOut(int32 SubIndex, int32 KeyIndex)
 
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         LocalMin.Y = LocalMin.X;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         LocalMin.Z = LocalMin.X;
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         LocalMin.Z = LocalMin.Y;
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         LocalMin.Y = LocalMin.X;
         LocalMin.Z = LocalMin.X;
         break;
-    case EDistributionVectorLockFlags::EDVLF_None:
+    case EDistributionVectorLockFlags::None:
     default:
         break;
     }
@@ -1503,24 +1517,23 @@ void UDistributionVectorUniform::GetOutRange(float& MinOut, float& MaxOut) const
 
     switch (LockedAxes)
     {
-    case EDistributionVectorLockFlags::EDVLF_XY:
+    case EDistributionVectorLockFlags::XY:
         LocalMin2 = FVector(LocalMin.X, LocalMin.X, LocalMin.Z);
         LocalMax2 = FVector(LocalMax.X, LocalMax.X, LocalMax.Z);
         break;
-    case EDistributionVectorLockFlags::EDVLF_XZ:
+    case EDistributionVectorLockFlags::XZ:
         LocalMin2 = FVector(LocalMin.X, LocalMin.Y, LocalMin.X);
         LocalMax2 = FVector(LocalMax.X, LocalMax.Y, LocalMax.X);
         break;
-    case EDistributionVectorLockFlags::EDVLF_YZ:
+    case EDistributionVectorLockFlags::YZ:
         LocalMin2 = FVector(LocalMin.X, LocalMin.Y, LocalMin.Y);
         LocalMax2 = FVector(LocalMax.X, LocalMax.Y, LocalMax.Y);
         break;
-    case EDistributionVectorLockFlags::EDVLF_XYZ:
+    case EDistributionVectorLockFlags::XYZ:
         LocalMin2 = FVector(LocalMin.X);
         LocalMax2 = FVector(LocalMax.X);
         break;
-    case EDistributionVectorLockFlags::EDVLF_None:
-    default:
+    case EDistributionVectorLockFlags::None:
         LocalMin2 = FVector(LocalMin.X, LocalMin.Y, LocalMin.Z);
         LocalMax2 = FVector(LocalMax.X, LocalMax.Y, LocalMax.Z);
         break;
@@ -1600,6 +1613,14 @@ void UDistributionVectorUniform::SetTangents(int32 SubIndex, int32 KeyIndex, flo
 float UDistributionFloat::GetValue(float F, UObject* Data, struct FRandomStream* InRandomStream) const
 {
     return 0.0;
+}
+
+FRawDistributionFloat::~FRawDistributionFloat()
+{
+    if (IsValid(Distribution))
+    {
+        Distribution->MarkAsGarbage();
+    }
 }
 
 bool FRawDistributionFloat::IsCreated()
@@ -1737,6 +1758,12 @@ void UDistributionFloat::GetOutRange(float& MinOut, float& MaxOut) const
 {
     MinOut = 0.0f;
     MaxOut = 0.0f;
+}
+
+void UDistributionFloat::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+    bIsDirty = true;
 }
 
 uint32 UDistributionFloat::InitializeRawEntry(float Time, float* Values) const

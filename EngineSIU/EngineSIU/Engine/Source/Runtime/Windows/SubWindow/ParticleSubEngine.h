@@ -18,5 +18,7 @@ public:
     UParticleSystemComponent* GetParticleSystemComponent() const;
 private:
     UParticleSystemComponent* ParticleSystemComponent = nullptr;
+private:
+    const float CameraSpeedMultiplier = 10;
 };
 

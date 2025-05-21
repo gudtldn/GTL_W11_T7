@@ -7,12 +7,11 @@ class UDistributionVector;
 
 enum class EDistributionVectorLockFlags : uint8
 {
-    EDVLF_None,
-    EDVLF_XY,
-    EDVLF_XZ,
-    EDVLF_YZ,
-    EDVLF_XYZ,
-    EDVLF_MAX,
+    None,
+    XY,
+    XZ,
+    YZ,
+    XYZ,
 };
 
 struct FRawDistributionVector : public FRawDistribution
@@ -34,7 +33,7 @@ private:
 
 public:
     UPROPERTY_WITH_FLAGS(
-        EditAnywhere,
+        EditAnywhere | EditInline,
         UDistributionVector*, Distribution
     )
 
@@ -50,6 +49,7 @@ public:
     {
     }
 
+    virtual ~FRawDistributionVector();
 
 #if WITH_EDITOR
     /**
@@ -114,7 +114,7 @@ public:
     /** Can this variable be baked out to a FRawDistribution? Should be true 99% of the time*/
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        bool, bCanBeBaked
+        bool, bCanBeBaked, = true;
         // uint8 bCanBeBaked : 1;
     )
 
@@ -192,7 +192,7 @@ public:
 
     /** Begin UObject interface */
 #if	WITH_EDITOR
-    // virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+    virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif // WITH_EDITOR
     // virtual bool NeedsLoadForClient() const override;
     // virtual bool NeedsLoadForServer() const override;

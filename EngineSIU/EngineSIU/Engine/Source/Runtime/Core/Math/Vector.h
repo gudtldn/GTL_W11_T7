@@ -349,9 +349,9 @@ inline FVector FVector::operator*(float Scalar) const
 
 inline FVector& FVector::operator*=(const FVector& Other)
 {
-    X = Other.X;
-    Y = Other.Y;
-    Z = Other.Z;
+    X *= Other.X;
+    Y *= Other.Y;
+    Z *= Other.Z;
     return *this;
 }
 

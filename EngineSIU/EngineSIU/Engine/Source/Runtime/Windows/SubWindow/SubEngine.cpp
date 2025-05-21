@@ -38,6 +38,7 @@ void USubEngine::Initialize(HWND& hWnd, FGraphicsDevice* InGraphics, FDXDBufferM
     ViewportClient->CameraReset();
     ViewportClient->FarClip = 1000000;
     ViewportClient->ViewFOV = 60.f;
+    ViewportClient->SetCameraSpeed(5.0f);
 
 }
 
@@ -57,6 +58,18 @@ void USubEngine::Render()
 
 void USubEngine::Release()
 {
+    if (SubRenderer)
+    {
+        SubRenderer->Release();
+        delete SubRenderer;
+        SubRenderer = nullptr;
+    }
+    if (SubUI)
+    {
+        SubUI->Shutdown();
+        delete SubUI;
+        SubUI = nullptr;
+    }
 }
 
 void USubEngine::RequestShowWindow(bool bShow)

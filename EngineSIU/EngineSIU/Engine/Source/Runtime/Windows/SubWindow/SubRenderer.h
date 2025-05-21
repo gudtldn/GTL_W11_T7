@@ -16,10 +16,9 @@ public:
     void Release();
 private:
     void UpdateViewCamera(const std::shared_ptr<FEditorViewportClient>& Viewport);
-    FGraphicsDevice* Graphics;
     USubEngine* Engine = nullptr;
+    FGraphicsDevice* Graphics;
     FDXDBufferManager* BufferManager;
-    FEditorViewportClient* TargetViewport = nullptr;
     FParticleRenderPass* ParticleRenderPass = nullptr;
 };
 

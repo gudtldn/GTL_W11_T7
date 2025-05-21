@@ -71,46 +71,33 @@ void UParticleSubEngine::Input(float DeltaTime)
             bRBClicked = false;
         }
     }
+
+
     if (bRBClicked)
     {
         if (GetAsyncKeyState('A') & 0x8000)
         {
-            ViewportClient->CameraMoveRight(-100.f * DeltaTime);
+            ViewportClient->CameraMoveRight(-CameraSpeedMultiplier * DeltaTime);
         }
         if (GetAsyncKeyState('D') & 0x8000)
         {
-            ViewportClient->CameraMoveRight(100.f * DeltaTime);
+            ViewportClient->CameraMoveRight(CameraSpeedMultiplier * DeltaTime);
         }
         if (GetAsyncKeyState('W') & 0x8000)
         {
-            ViewportClient->CameraMoveForward(100.f * DeltaTime);
+            ViewportClient->CameraMoveForward(CameraSpeedMultiplier * DeltaTime);
         }
         if (GetAsyncKeyState('S') & 0x8000)
         {
-            ViewportClient->CameraMoveForward(-100.f * DeltaTime);
+            ViewportClient->CameraMoveForward(-CameraSpeedMultiplier * DeltaTime);
         }
         if (GetAsyncKeyState('E') & 0x8000)
         {
-            ViewportClient->CameraMoveUp(100.f * DeltaTime);
+            ViewportClient->CameraMoveUp(CameraSpeedMultiplier * DeltaTime);
         }
         if (GetAsyncKeyState('Q') & 0x8000)
         {
-            ViewportClient->CameraMoveUp(-100.f * DeltaTime);
-        }
-    }
-    else
-    {
-        if (GetAsyncKeyState('W') & 0x8000)
-        {
-            EditorPlayer->SetMode(CM_TRANSLATION);
-        }
-        if (GetAsyncKeyState('E') & 0x8000)
-        {
-            EditorPlayer->SetMode(CM_ROTATION);
-        }
-        if (GetAsyncKeyState('R') & 0x8000)
-        {
-            EditorPlayer->SetMode(CM_SCALE);
+            ViewportClient->CameraMoveUp(-CameraSpeedMultiplier * DeltaTime);
         }
     }
 }
@@ -129,7 +116,6 @@ void UParticleSubEngine::Render()
         SubUI->BeginFrame();
 
         //UI를 위한 렌더 타겟 설정
-        //FGraphicsDevice* Graphics = &FEngineLoop::ParticleViewerGD;
         Graphics->DeviceContext->OMSetRenderTargets(
             1,
             &Graphics->BackBufferRTV,
@@ -147,18 +133,6 @@ void UParticleSubEngine::Render()
 void UParticleSubEngine::Release()
 {
     USubEngine::Release();
-    if (SubUI)
-    {
-        SubUI->Shutdown();
-        delete SubUI;
-        SubUI = nullptr;
-    }
-    if (SubRenderer)
-    {
-        SubRenderer->Release();
-        delete SubRenderer;
-        SubRenderer = nullptr;
-    }
 }
 
 UParticleSystemComponent* UParticleSubEngine::GetParticleSystemComponent() const

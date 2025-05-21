@@ -423,6 +423,22 @@ bool FString::RemoveFromStart(const FString& InPrefix, ESearchCase::Type SearchC
     return false; // Prefix not found at the start
 }
 
+bool FString::EndsWith(const FString& InSuffix, ESearchCase::Type SearchCase) const
+{
+    const int32 MyLen = Len();           // 전체 문자열 길이
+    const int32 SuffixLen = InSuffix.Len(); // 비교할 접미사 길이
+
+    // 접미사가 더 길면 무조건 false
+    if (SuffixLen > MyLen)
+        return false;
+
+    // 끝에서 접미사 길이만큼 잘라낸 부분 문자열
+    FString Tail = Mid(MyLen - SuffixLen, SuffixLen);
+
+    // 잘라낸 부분과 접미사를 대소문자 조건에 따라 비교
+    return Tail.Equals(InSuffix, SearchCase);
+}
+
 // Printf 함수 구현
 FString FString::Printf(const ElementType* Format, ...)
 {

@@ -15,22 +15,6 @@
 #include "Particles/ParticleModules/ParticleModuleTypeDataBase.h"
 #include <Particles/ParticleModules/ParticleModuleVelocity.h>
 
-const char* ModuleTypeToString(EModuleType ModuleType)
-{
-    switch (ModuleType) {
-    case EPMT_General:    return "General";
-    case EPMT_TypeData:   return "TypeData";
-    case EPMT_Beam:       return "Beam";
-    case EPMT_Trail:      return "Trail";
-    case EPMT_Spawn:      return "Spawn";
-    case EPMT_Required:   return "Required";
-    case EPMT_Event:      return "Event";
-    case EPMT_Light:      return "Light";
-    case EPMT_SubUV:      return "SubUV";
-    default:              return "Unknown";
-    }
-}
-
 
 void ParticleViewerPanel::Render()
 {
@@ -265,8 +249,8 @@ void ParticleViewerPanel::RenderEmitterModulePopup(int EmitterIndex)
 {
     TArray<UClass*> ChildModule;
     GetChildOfClass(UParticleModule::StaticClass(), ChildModule);
-    ChildModule.RemoveAt(0);
     for (UClass* Child : ChildModule) {
+        if (Child->GetName().EndsWith(TEXT("Base"))) continue; // Base로 끝나는 클래스는 제외
         if (ImGui::MenuItem(Child->GetName().ToAnsiString().c_str())) {
             UParticleEmitter* Emitter = ParticleSystem->Emitters[EmitterIndex];
             UParticleModule* SpawnModule = FObjectFactory::ConstructObject<UParticleModule>(Child, Emitter->LODLevels[0]);

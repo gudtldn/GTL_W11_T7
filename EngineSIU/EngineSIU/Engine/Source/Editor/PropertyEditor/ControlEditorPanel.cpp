@@ -669,7 +669,7 @@ void ControlEditorPanel::CreatePIEButton(const ImVec2 ButtonSize, ImFont* IconFo
 
     const float CenterX = (WindowSize.x - ButtonSize.x) / 2.5f;
 
-    ImGui::SetCursorScreenPos(ImVec2(CenterX - 40.0f, 10.0f));
+    ImGui::SetCursorPosX(CenterX - ButtonSize.x*0.5f);
 
     if (ImGui::Button("\ue9a8", ButtonSize)) // Play
     {

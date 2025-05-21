@@ -14,23 +14,23 @@ public:
     /** Upper end of FVector magnitude range. */
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        FVector, Max
+        FVector, Max, = FVector::OneVector;
     )
 
     /** Lower end of FVector magnitude range. */
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        FVector, Min
+        FVector, Min, = FVector::OneVector;
     )
 
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        EDistributionVectorLockFlags, LockedAxes
+        EDistributionVectorLockFlags, LockedAxes, = EDistributionVectorLockFlags::None;
     )
 
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        bool, bUseExtremes
+        bool, bUseExtremes, = false;
     )
 
 public:

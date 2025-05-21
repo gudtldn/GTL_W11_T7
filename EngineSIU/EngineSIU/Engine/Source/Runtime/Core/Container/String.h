@@ -22,27 +22,27 @@
 /** Determines case sensitivity options for string comparisons. */
 namespace ESearchCase
 {
-enum Type : uint8
-{
-    /** Case sensitive. Upper/lower casing must match for strings to be considered equal. */
-    CaseSensitive,
+    enum Type : uint8
+    {
+        /** Case sensitive. Upper/lower casing must match for strings to be considered equal. */
+        CaseSensitive,
 
-    /** Ignore case. Upper/lower casing does not matter when making a comparison. */
-    IgnoreCase,
-};
+        /** Ignore case. Upper/lower casing does not matter when making a comparison. */
+        IgnoreCase,
+    };
 }
 
 /** Determines search direction for string operations. */
 namespace ESearchDir
 {
-enum Type : uint8
-{
-    /** Search from the start, moving forward through the string. */
-    FromStart,
+    enum Type : uint8
+    {
+        /** Search from the start, moving forward through the string. */
+        FromStart,
 
-    /** Search from the end, moving backward through the string. */
-    FromEnd,
-};
+        /** Search from the end, moving backward through the string. */
+        FromEnd,
+    };
 }
 
 class FString
@@ -62,7 +62,7 @@ private:
 
     BaseStringType PrivateString;
 
-	friend struct std::hash<FString>;
+    friend struct std::hash<FString>;
     friend ElementType* GetData(FString&);
     friend const ElementType* GetData(const FString&);
 
@@ -99,32 +99,32 @@ public:
     FString(const WIDECHAR* InString) : FString(WStringToString(InString)) {}
 #endif
 
-	FORCEINLINE std::string ToAnsiString() const
-	{
+    FORCEINLINE std::string ToAnsiString() const
+    {
 #if USE_WIDECHAR
-		return WStringToString(std::wstring(PrivateString));
+        return WStringToString(std::wstring(PrivateString));
 #else
         return std::string(PrivateString);
 #endif
-	}
+    }
 
-	FORCEINLINE std::wstring ToWideString() const
-	{
+    FORCEINLINE std::wstring ToWideString() const
+    {
 #if USE_WIDECHAR
-		return std::wstring(PrivateString);
+        return std::wstring(PrivateString);
 #else
         return StringToWString(std::string(PrivateString));
 #endif
-	}
+    }
 
-	template <typename Number>
-		requires std::is_integral_v<Number>
+    template <typename Number>
+        requires std::is_integral_v<Number>
     static FString FromInt(Number Num);
 
     static FString SanitizeFloat(float InFloat);
 
-	static float ToFloat(const FString& InString);
-    
+    static float ToFloat(const FString& InString);
+
     static int ToInt(const FString& InString);
 
     /**
@@ -217,16 +217,24 @@ public:
      * @return 접두사가 성공적으로 제거되었으면 true, 아니면 false를 반환합니다.
      */
     bool RemoveFromStart(const FString& InPrefix, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase);
+    
+    /**
+     * 문자열이 지정된 접미사(Suffix)로 끝나는지 확인합니다.
+     * @param Suffix 검사할 접미사 문자열
+     * @param SearchCase 대소문자 구분 여부 (기본값: 대소문자 구분)
+     * @return 문자열이 해당 접미사로 끝나면 true, 아니면 false
+     */
+    bool EndsWith(const FString& InSuffix, ESearchCase::Type SearchCase = ESearchCase::IgnoreCase) const;
 
     void Reserve(int32 CharacterCount);
     void Resize(int32 CharacterCount);
 
-    [[nodiscard]] FString ToUpper() const &;
-    [[nodiscard]] FString ToUpper() &&;
+    [[nodiscard]] FString ToUpper() const&;
+    [[nodiscard]] FString ToUpper()&&;
     void ToUpperInline();
 
-    [[nodiscard]] FString ToLower() const &;
-    [[nodiscard]] FString ToLower() &&;
+    [[nodiscard]] FString ToLower() const&;
+    [[nodiscard]] FString ToLower()&&;
     void ToLowerInline();
 
 public:
@@ -254,7 +262,7 @@ public:
     {
         return PrivateString[Index];
     }
-    
+
     FORCEINLINE bool operator<(const FString& Rhs) const
     {
         return GetContainerPrivate() < Rhs.GetContainerPrivate();
@@ -276,13 +284,13 @@ public:
 };
 
 template <typename Number>
-	requires std::is_integral_v<Number>
+    requires std::is_integral_v<Number>
 FString FString::FromInt(Number Num)
 {
 #if USE_WIDECHAR
-    return FString{std::to_wstring(Num)};
+    return FString{ std::to_wstring(Num) };
 #else
-    return FString{std::to_string(Num)};
+    return FString{ std::to_string(Num) };
 #endif
 }
 
@@ -303,7 +311,7 @@ FORCEINLINE const FString::ElementType* FString::operator*() const
 
 FString operator+(const FString& Lhs, const FString& Rhs)
 {
-    FString CopyLhs{Lhs};
+    FString CopyLhs{ Lhs };
     return CopyLhs += Rhs;
 }
 

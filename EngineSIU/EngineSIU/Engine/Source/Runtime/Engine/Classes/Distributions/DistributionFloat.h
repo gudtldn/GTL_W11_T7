@@ -20,7 +20,7 @@ private:
 
 public:
     UPROPERTY_WITH_FLAGS(
-        EditAnywhere,
+        EditAnywhere | EditInline,
         UDistributionFloat*, Distribution
     )
 
@@ -31,6 +31,8 @@ public:
         , Distribution(nullptr)
     {
     }
+
+    virtual ~FRawDistributionFloat();
 
     /** Whether the distribution data has been cooked or the object itself is available */
     bool IsCreated();
@@ -93,7 +95,7 @@ public:
     /** Can this variable be baked out to a FRawDistribution? Should be true 99% of the time*/
     UPROPERTY_WITH_FLAGS(
         EditAnywhere,
-        bool, bCanBeBaked
+        bool, bCanBeBaked, = true;
         // uint8 bCanBeBaked : 1;
     )
 
@@ -170,7 +172,7 @@ public:
 
     /** Begin UObject interface */
 #if	WITH_EDITOR
-    // virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+    virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif	// WITH_EDITOR
     // virtual bool NeedsLoadForClient() const override;
     // virtual bool NeedsLoadForServer() const override;
