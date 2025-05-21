@@ -370,8 +370,6 @@ void ControlEditorPanel::CreateModifyButton(const ImVec2 ButtonSize, ImFont* Ico
             {.Label = "Coin", .OBJ = OBJ_COIN},
             {.Label = "TriggerBox", .OBJ = OBJ_TRIGGERBOX},
             {.Label = "SkeletalMeshActor", .OBJ = OBJ_SKELETALMESH},
-            {.Label = "PARTICLE_SPRITE", .OBJ = OBJ_PARTICLE_SPRITE},
-            {.Label = "PARTICLE_MESH", .OBJ = OBJ_PARTICLE_MESH},
             {.Label = "SequencerPlayer", .OBJ = OBJ_SEQUENCERPLAYER},
             {.Label = "ParticleSystem", .OBJ = OBJ_PARTICLESYSTEM},
 
@@ -512,22 +510,6 @@ void ControlEditorPanel::CreateModifyButton(const ImVec2 ButtonSize, ImFont* Ico
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SKELETALMESH"));
                 }
                 break;
-                case OBJ_PARTICLE_SPRITE:
-                {
-                    AParticleSystemActor* ParticleActor = World->SpawnActor<AParticleSystemActor>();
-                    ParticleActor->SetActorLabel(TEXT("OBJ_PARTICLE_SPRITE"));
-                    ParticleActor->GetParticleSystemComponent()->InitTestParticles(EDynamicEmitterType::DET_Sprite);
-                    // SpriteEmitter 기본 설정 적용 등은 여기서 추가 가능
-                    break;
-                }
-                case OBJ_PARTICLE_MESH:
-                {
-                    AParticleSystemActor* ParticleActor = World->SpawnActor<AParticleSystemActor>();
-                    ParticleActor->SetActorLabel(TEXT("OBJ_PARTICLE_MESH"));
-                    ParticleActor->GetParticleSystemComponent()->InitTestParticles(EDynamicEmitterType::DET_Mesh);
-                    // MeshEmitter 기본 설정 적용 등은 여기서 추가 가능
-                    break;
-                }
 
                 case OBJ_SEQUENCERPLAYER:
                 {

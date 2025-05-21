@@ -29,7 +29,7 @@ struct FSpriteParticleInstance
     float ParticleId;
     FVector2D Size;
     float Rotation;
-    int32 SubImageIndex;
+    float SubImageIndex;
     FLinearColor Color;
 };
 struct FMeshParticleInstance
@@ -55,6 +55,24 @@ void FParticleRenderPass::Initialize(FDXDBufferManager* InBufferManager, FGraphi
     ShaderManager = InShaderManager;
 
     CreateShader();
+    // === [1] Alpha Blend State 생성 ===
+    D3D11_BLEND_DESC BlendDesc = {};
+    BlendDesc.RenderTarget[0].BlendEnable = TRUE;
+    BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    Graphics->Device->CreateBlendState(&BlendDesc, &AlphaBlendState);
+
+    // === [2] DepthStencil State (Z-Write Off) 생성 ===
+    D3D11_DEPTH_STENCIL_DESC DepthDesc = {};
+    DepthDesc.DepthEnable = TRUE;
+    DepthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; // ✅ 깊이 기록 안함
+    DepthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    Graphics->Device->CreateDepthStencilState(&DepthDesc, &NoZWriteState);
 
     // Create static quad vertex buffer (6 vertices)
     TArray<FSpriteVertex> QuadVertices = {
@@ -91,7 +109,7 @@ void FParticleRenderPass::CreateShader()
         { "INSTANCE_ID",     0, DXGI_FORMAT_R32_FLOAT,           1, 28,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
         { "INSTANCE_SIZE",   0, DXGI_FORMAT_R32G32_FLOAT,        1, 32,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
         { "INSTANCE_ROT",    0, DXGI_FORMAT_R32_FLOAT,           1, 40,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-        { "INSTANCE_SUBUV",  0, DXGI_FORMAT_R32_SINT,           1, 44,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE_SUBUV",  0, DXGI_FORMAT_R32_FLOAT,           1, 44,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
         { "INSTANCE_COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT,  1, 48,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
     };
     ShaderManager->AddVertexShaderAndInputLayout(L"ParticleShader_Sprite", L"Shaders/ParticleShader.hlsl", "mainVS", InputLayout, ARRAYSIZE(InputLayout), DefinesSprite);
@@ -118,7 +136,9 @@ void FParticleRenderPass::CreateShader()
 }
 
 
-void FParticleRenderPass::ReleaseShader() {}
+void FParticleRenderPass::ReleaseShader()
+{
+}
 
 void FParticleRenderPass::PrepareRenderArr()
 {
@@ -150,6 +170,11 @@ void FParticleRenderPass::PrepareRenderState(const std::shared_ptr<FEditorViewpo
     FDepthStencilRHI* DS = ViewportResource->GetDepthStencil(EResourceType::ERT_Scene);
     Graphics->DeviceContext->RSSetViewports(1, &ViewportResource->GetD3DViewport());
     Graphics->DeviceContext->OMSetRenderTargets(1, &RT->RTV, DS->DSV);
+
+    // ✅ BlendState, DepthStencilState 설정
+    float BlendFactor[4] = { 0, 0, 0, 0 };
+    Graphics->DeviceContext->OMSetBlendState(AlphaBlendState, BlendFactor, 0xffffffff);
+    Graphics->DeviceContext->OMSetDepthStencilState(NoZWriteState, 0);
 }
 void FParticleRenderPass::Render(const std::shared_ptr<FEditorViewportClient>& Viewport)
 {
@@ -170,7 +195,7 @@ void FParticleRenderPass::Render(const std::shared_ptr<FEditorViewportClient>& V
             switch (ReplayData.eEmitterType)
             {
             case DET_Sprite:
-                RenderSpriteEmitter(Comp, Emitter, (const FDynamicSpriteEmitterReplayDataBase&)ReplayData);
+                RenderSpriteEmitter(Viewport,Comp, Emitter, (const FDynamicSpriteEmitterReplayDataBase&)ReplayData);
                 break;
 
             case DET_Mesh:
@@ -183,9 +208,11 @@ void FParticleRenderPass::Render(const std::shared_ptr<FEditorViewportClient>& V
         }
     }
 
+    Graphics->DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    Graphics->DeviceContext->OMSetDepthStencilState(nullptr, 0);
     Graphics->DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
-void FParticleRenderPass::RenderSpriteEmitter(UParticleSystemComponent* Comp, FParticleEmitterInstance* Emitter, const FDynamicSpriteEmitterReplayDataBase& ReplayData)
+void FParticleRenderPass::RenderSpriteEmitter(const std::shared_ptr<FEditorViewportClient>& Viewport,UParticleSystemComponent* Comp, FParticleEmitterInstance* Emitter, const FDynamicSpriteEmitterReplayDataBase& ReplayData)
 {
     //TestTexture = FEngineLoop::ResourceManager.GetTexture(L"Assets/Texture/T_Explosion_SubUV.png");
     ID3D11VertexShader* VS = ShaderManager->GetVertexShaderByKey(L"ParticleShader_Sprite");
@@ -197,20 +224,55 @@ void FParticleRenderPass::RenderSpriteEmitter(UParticleSystemComponent* Comp, FP
     Graphics->DeviceContext->PSSetShader(PS, nullptr, 0);
 
     //TODO: 애니메이션 모듈 추가되면 지우기
+
+    //blend 테스트용
+    /*
     static float SubImageIndexTimer = 0.0f;
-    static int SubImageOffset = 0;
+    static float SubImageOffset = 0;
+    SubImageOffset += 0.05f;
+    if (SubImageOffset >= 35.0f)SubImageOffset = 0.0f;*/
+    //no blend 테스트용
+    /*
     SubImageIndexTimer += 0.05f;
     if (SubImageIndexTimer >= 1.0f)
     {
         SubImageIndexTimer = 0.0f;
-        SubImageOffset++;
-    }
-    
+        SubImageOffset += 1.0f;
+        if (SubImageOffset >= 35.0f)SubImageOffset = 0.0f;
+    }*/
+    // Set Object Constant Buffer
+    FObjectConstantBuffer ObjectData;
+    FMatrix WorldMatrix = Comp->GetWorldMatrix();
+    ObjectData.WorldMatrix = WorldMatrix;
+    ObjectData.InverseTransposedWorld = FMatrix::Transpose(FMatrix::Inverse(WorldMatrix));
+    ObjectData.UUIDColor = Comp->EncodeUUID() / 255.0f;
+    ObjectData.bIsSelected = false;
+    BufferManager->UpdateConstantBuffer(TEXT("FObjectConstantBuffer"), ObjectData);
 
-    TArray<FSpriteParticleInstance> Instances;
+    // SubUV 정보 바인딩
+    FParticleSettingsConstants ParticleSettings;
+    ParticleSettings.SubUVCols = ReplayData.SubImages_Horizontal;
+    ParticleSettings.SubUVRows = ReplayData.SubImages_Vertical;
+    int TotalFrames = ParticleSettings.SubUVCols * ParticleSettings.SubUVRows-1;
+    BufferManager->UpdateConstantBuffer("FParticleSettingsConstants", ParticleSettings);
+
+    //TArray<FSpriteParticleInstance> Instances;
 
     const int32 Stride = Emitter->ParticleStride;
     const int32 ActiveCount = Emitter->ActiveParticles;
+    struct FSortableParticle
+    {
+        float DistanceToCamera;
+        FSpriteParticleInstance Instance;
+
+        bool operator<(const FSortableParticle& Other) const
+        {
+            return DistanceToCamera > Other.DistanceToCamera; // 뒤에서부터 그리기 (카메라 기준 먼 것부터)
+        }
+    };
+    TArray<FSortableParticle> SortedParticles;
+
+    FVector CameraPos = Viewport->PerspectiveCamera.GetLocation(); // 또는 Viewport->GetViewOrigin() 사용
 
     for (int32 i = 0; i < ActiveCount; ++i)
     {
@@ -225,9 +287,22 @@ void FParticleRenderPass::RenderSpriteEmitter(UParticleSystemComponent* Comp, FP
         Inst.ParticleId = static_cast<float>(i);
         Inst.Size = FVector2D(P->Size.X, P->Size.Y);
         Inst.Rotation = P->Rotation;
-        Inst.SubImageIndex = (ReplayData.SubUVDataOffset+SubImageOffset)%(ReplayData.SubImages_Horizontal * ReplayData.SubImages_Vertical);
+        Inst.SubImageIndex = P->RelativeTime * static_cast<float> (TotalFrames);
+        //Inst.Color = FLinearColor(1,1,1,0.8f);
         Inst.Color = P->Color;
-        Instances.Add(Inst);
+        //Instances.Add(Inst);
+
+        float DistSq = FVector::DistSquared(CameraPos, P->Location);
+        SortedParticles.Add({ DistSq, Inst });
+    }
+    SortedParticles.Sort();
+
+    TArray<FSpriteParticleInstance> Instances;
+    Instances.Reserve(SortedParticles.Num());
+
+    for (const FSortableParticle& Sortable : SortedParticles)
+    {
+        Instances.Add(Sortable.Instance);
     }
 
     if (Instances.IsEmpty()) return;
@@ -235,27 +310,13 @@ void FParticleRenderPass::RenderSpriteEmitter(UParticleSystemComponent* Comp, FP
     // Upload instance buffer
     BufferManager->UpdateDynamicVertexBuffer(TEXT("Global_SpriteInstance"), Instances);
 
-    // Set Object Constant Buffer
-    FObjectConstantBuffer ObjectData;
-    FMatrix WorldMatrix = Comp->GetWorldMatrix();
-    ObjectData.WorldMatrix = WorldMatrix;
-    ObjectData.InverseTransposedWorld = FMatrix::Transpose(FMatrix::Inverse(WorldMatrix));
-    ObjectData.UUIDColor = Comp->EncodeUUID() / 255.0f;
-    ObjectData.bIsSelected = false;
-    BufferManager->UpdateConstantBuffer(TEXT("FObjectConstantBuffer"), ObjectData);
-
-    // SubUV 정보 바인딩
-    FParticleSettingsConstants ParticleSettings;
-    ParticleSettings.SubUVCols = ReplayData.SubImages_Horizontal;
-    ParticleSettings.SubUVRows = ReplayData.SubImages_Vertical;
-    BufferManager->UpdateConstantBuffer("FParticleSettingsConstants", ParticleSettings);
-
     // Draw
     ID3D11Buffer* Buffers[2] = { QuadVertexInfo.VertexBuffer, InstanceInfoSprite.VertexBuffer };
     UINT Strides[2] = { sizeof(FSpriteVertex), sizeof(FSpriteParticleInstance) };
     UINT Offsets[2] = { 0, 0 };
 
     //Sprite니까 무조건 0번?
+    if (!ReplayData.Material)return;
     std::shared_ptr<FTexture> Texture = 
         FEngineLoop::ResourceManager.GetTexture(ReplayData.Material->GetMaterialInfo().TextureInfos[0].TexturePath);
 

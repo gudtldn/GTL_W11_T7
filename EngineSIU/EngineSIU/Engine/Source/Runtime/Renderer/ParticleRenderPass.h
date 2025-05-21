@@ -26,7 +26,7 @@ public:
 private:
     void CreateShader();
     void ReleaseShader();
-    void RenderSpriteEmitter(UParticleSystemComponent* Comp, FParticleEmitterInstance* Emitter, const FDynamicSpriteEmitterReplayDataBase& ReplayData);
+    void RenderSpriteEmitter(const std::shared_ptr<FEditorViewportClient>& Viewport,UParticleSystemComponent* Comp, FParticleEmitterInstance* Emitter, const FDynamicSpriteEmitterReplayDataBase& ReplayData);
     void RenderMeshEmitter(UParticleSystemComponent* Comp, FParticleMeshEmitterInstance* Emitter, const FDynamicMeshEmitterReplayDataBase& ReplayData);
 
     void PrepareRenderState(const std::shared_ptr<FEditorViewportClient>& Viewport);
@@ -46,13 +46,14 @@ private:
     FIndexInfo StaticMeshIndexInfo;
 
     TArray<UParticleSystemComponent*> ParticleComponents;
-
+    ID3D11BlendState* AlphaBlendState;
+    ID3D11DepthStencilState* NoZWriteState;
 
     //FDynamicSpriteEmitterReplayDataBase의
     //MaterialInterface가 구현이 안 되어있어 임시 사용
     //std::shared_ptr<FTexture> TestTexture;
 
     //임시로 사용
-    FName TestMeshAssetName = L"Contents/Reference/Reference.obj";
+    //FName TestMeshAssetName = L"Contents/Reference/Reference.obj";
 
 };

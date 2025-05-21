@@ -44,7 +44,6 @@ public:
 
     void SetTemplate(UParticleSystem* InTemplate);
     void ClearDynamicData();
-    void InitTestParticles(EDynamicEmitterType Type);
     
     UMaterial* GetMaterial(int32 ElementIndex) const;
     void SetMaterial(int32 ElementIndex, UMaterial* Material);

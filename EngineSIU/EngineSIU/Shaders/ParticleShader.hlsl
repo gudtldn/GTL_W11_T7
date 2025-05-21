@@ -27,7 +27,7 @@ struct VS_INPUT
     float ParticleId : INSTANCE_ID;
     float2 Size : INSTANCE_SIZE;
     float Rotation : INSTANCE_ROT;
-    int SubImageIndex : INSTANCE_SUBUV;
+    float SubImageIndex : INSTANCE_SUBUV;
     float4 Color : INSTANCE_COLOR;
 };
 
@@ -54,8 +54,10 @@ struct VS_OUTPUT
 {
     float4 Position : SV_POSITION;
     float4 Color : COLOR;
-    float2 UV : TEXCOORD0;
+    // UV.xy: 첫 번째 SubUV 프레임, UV.zw: 두 번째 SubUV 프레임 (SubUV 보간용)
+    float4 UV : TEXCOORD0;
     float3 WorldPos : TEXCOORD1;
+    float LerpAlpha : TEXCOORD2;
 };
 
 // ==================== Vertex Shader ====================
@@ -98,12 +100,33 @@ VS_OUTPUT mainVS(VS_INPUT input)
 
     // [7] SubUV
     float2 frameSize = float2(1.0f / SubUVCols, 1.0f / SubUVRows);
-    int SubUVCol = input.SubImageIndex % SubUVCols;
-    int SubUVRow = input.SubImageIndex / SubUVCols;
-    float2 UVOffset = float2(SubUVCol, SubUVRow) * frameSize;
+    float ImageIndex = input.SubImageIndex;
+    float BaseIndex = floor(ImageIndex);
+    float LerpAlpha = frac(ImageIndex); // 보간 알파
 
-    output.UV = UVOffset + (input.UV + 0.5f) * frameSize;
+    // 현재 프레임
+    int MaxFrame = SubUVCols * SubUVRows - 1;
+    int Frame0 = min(BaseIndex,BaseIndex);
+    int Frame1 = min(Frame0 + 1, MaxFrame);
+
+    int Col0 = Frame0 % SubUVCols;
+    int Row0 = Frame0 / SubUVCols;
+
+    int Col1 = Frame1 % SubUVCols;
+    int Row1 = Frame1 / SubUVCols;
+
+    float2 UV0 = float2(Col0, Row0) * frameSize + (input.UV + 0.5f) * frameSize;
+    float2 UV1 = float2(Col1, Row1) * frameSize + (input.UV + 0.5f) * frameSize;
+
+    // 보간용 UV 두 개를 넘김 (PixelShader에서 보간)
+    output.UV.xy = UV0; // TEXCOORD0.xy
+    output.UV.zw = UV1; // TEXCOORD0.zw (pack)
     output.Color = input.Color;
+    if (all(input.Color.rgb < 0.001f))
+        output.Color.rgb = float3(1, 1, 1);
+    if (input.Color.a<0.001f)
+        output.Color.a = 1;
+    output.LerpAlpha = LerpAlpha;
 #endif
 
 #if defined(PARTICLE_MESH)
@@ -113,7 +136,7 @@ VS_OUTPUT mainVS(VS_INPUT input)
     output.Position = mul(viewPos, ProjectionMatrix);
     output.WorldPos = worldPos.xyz;
     output.Color = input.Color;
-    output.UV = input.UV;
+    output.UV = input.UV.xyxy;
 #endif
 
     return output;
@@ -126,7 +149,14 @@ VS_OUTPUT mainVS(VS_INPUT input)
 float4 mainPS(VS_OUTPUT input) : SV_TARGET
 {
 #if defined(PARTICLE_SPRITE)
-    float4 texColor = MaterialTextures[0].Sample(MaterialSamplers[0], input.UV);
+    float2 UV0 = input.UV.xy;
+    float2 UV1 = input.UV.zw;
+    float LerpAlpha = input.LerpAlpha;
+
+    float4 texColor0 = MaterialTextures[0].Sample(MaterialSamplers[0], UV0);
+    float4 texColor1 = MaterialTextures[0].Sample(MaterialSamplers[0], UV1);
+    float4 texColor = lerp(texColor0, texColor1, LerpAlpha);
+
     if (texColor.a < 0.1f || max(max(texColor.r, texColor.g), texColor.b) < 0.05f)
         discard;
 
@@ -137,7 +167,7 @@ float4 mainPS(VS_OUTPUT input) : SV_TARGET
 #endif
     
     //return float4(input.UV,0,1);
-    return /*input.Color * */texColor;
+    return float4(texColor.rgb, 1.0f) * input.Color;
 }
 
 #endif // PARTICLE_SHADER
