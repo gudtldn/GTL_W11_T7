@@ -44,10 +44,12 @@ void FParticleEmitterInstance::Init()
     Resize(FMath::Min(SpriteTemplate->InitialAllocationCount, 100), true);
 
     RandomStream.Initialize("RandomSeed");
+
 }
 
 void FParticleEmitterInstance::Tick(float DeltaTime)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(ParticleTick_CPU)
     if (!SpriteTemplate || !SpriteTemplate->GetCurrentLODLevel(this))
     {
         return;

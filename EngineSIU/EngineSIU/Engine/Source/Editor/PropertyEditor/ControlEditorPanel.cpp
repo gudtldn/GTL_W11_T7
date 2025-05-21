@@ -524,7 +524,7 @@ void ControlEditorPanel::CreateModifyButton(const ImVec2 ButtonSize, ImFont* Ico
                     SpawnedActor->SetActorTickInEditor(true);
                     UParticleSystemComponent* ParticleComponent = SpawnedActor->AddComponent<UParticleSystemComponent>("ParticleSystemComponent_0");
                     ParticleComponent->SetupAttachment(SpawnedActor->GetRootComponent());
-                    UParticleSystem* Template = FObjectFactory::ConstructObject<UParticleSystem>(ParticleComponent);
+                    /*UParticleSystem* Template = FObjectFactory::ConstructObject<UParticleSystem>(ParticleComponent);
                     UParticleSpriteEmitter* Emitter1 = FObjectFactory::ConstructObject<UParticleSpriteEmitter>(Template);
 
                     Template->Emitters.Add(Emitter1);
@@ -542,7 +542,7 @@ void ControlEditorPanel::CreateModifyButton(const ImVec2 ButtonSize, ImFont* Ico
                     LODLevel->UpdateModuleLists();
 
                     Template->PostEditChangeProperty();
-                    ParticleComponent->SetTemplate(Template);
+                    ParticleComponent->SetTemplate(Template);*/
 
                     break;
                 }
