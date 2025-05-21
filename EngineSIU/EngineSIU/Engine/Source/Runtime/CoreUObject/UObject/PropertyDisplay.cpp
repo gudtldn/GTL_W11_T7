@@ -642,47 +642,47 @@ void FObjectProperty::DisplayRawDataInImGui_Implement(const char* PropertyLabel,
 
     if (ImGui::TreeNodeEx(PropertyLabel, ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen))
     {
+        const UClass* ObjectClass = GetSpecificClass();
+        assert(ObjectClass);
+
         UObject** Object = static_cast<UObject**>(DataPtr);
 
-        if (const UClass* ObjectClass = IsValid(*Object) ? (*Object)->GetClass() : nullptr)
+        // 포인터가 가리키는 객체를 수정, 여기서는 UObject의 인스턴스
+        if (HasAnyFlags(Flags, EPropertyFlags::EditAnywhere))
         {
-            // 포인터가 가리키는 객체를 수정, 여기서는 UObject의 인스턴스
-            if (HasAnyFlags(Flags, EPropertyFlags::EditAnywhere))
+            TArray<UObject*> ChildObjects;
+            GetObjectsOfClass(ObjectClass, ChildObjects, true);
+
+            if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), (*Object)->GetName().ToAnsiString().c_str()))
             {
-                TArray<UObject*> ChildObjects;
-                GetObjectsOfClass(ObjectClass, ChildObjects, true);
-
-                if (ImGui::BeginCombo(std::format("##{}", PropertyLabel).c_str(), (*Object)->GetName().ToAnsiString().c_str()))
+                for (UObject* ChildObject : ChildObjects)
                 {
-                    for (UObject* ChildObject : ChildObjects)
+                    const std::string ObjectName = ChildObject->GetName().ToAnsiString();
+                    const bool bIsSelected = ChildObject == *Object;
+                    if (ImGui::Selectable(ObjectName.c_str(), bIsSelected))
                     {
-                        const std::string ObjectName = ChildObject->GetName().ToAnsiString();
-                        const bool bIsSelected = ChildObject == *Object;
-                        if (ImGui::Selectable(ObjectName.c_str(), bIsSelected))
-                        {
-                            // OwnerObject: 나중에 수정, 지금은 목록만 보여주고, 설정은 안함
-                            *Object = ChildObject;
-                            FPropertyChangedEvent Event(const_cast<FObjectProperty*>(this), OwnerObject, EPropertyChangeType::ValueSet);
-                            OwnerObject->PostEditChangeProperty(Event);
-                        }
-                        if (bIsSelected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                        ImGui::Separator();
+                        // OwnerObject: 나중에 수정, 지금은 목록만 보여주고, 설정은 안함
+                        *Object = ChildObject;
+                        FPropertyChangedEvent Event(const_cast<FObjectProperty*>(this), OwnerObject, EPropertyChangeType::ValueSet);
+                        OwnerObject->PostEditChangeProperty(Event);
                     }
-                    ImGui::EndCombo();
+                    if (bIsSelected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::Separator();
                 }
-
-                if (HasAnyFlags(Flags, EPropertyFlags::EditInline))
-                {
-                    DisplayMembersRecursive(ObjectClass, *Object, *Object);
-                }
+                ImGui::EndCombo();
             }
-            else if (HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere))
+
+            if (HasAnyFlags(Flags, EPropertyFlags::EditInline))
             {
                 DisplayMembersRecursive(ObjectClass, *Object, *Object);
             }
+        }
+        else if (HasAnyFlags(Flags, EPropertyFlags::VisibleAnywhere))
+        {
+            DisplayMembersRecursive(ObjectClass, *Object, *Object);
         }
         ImGui::TreePop();
     }

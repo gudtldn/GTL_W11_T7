@@ -11,6 +11,7 @@ public:
     virtual void Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, FBaseParticle* ParticleBase) override;
     virtual void PostInitProperties();
     virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
     virtual FName GetModuleName() const override;
     UPROPERTY(
         EditAnywhere,
