@@ -23,6 +23,8 @@ public:
 
     virtual void SerializeAsset(FArchive& Ar) override;
 
+    UPhysicsAsset* GetPhysicsAsset() const ;
+
 protected:
     std::unique_ptr<FSkeletalMeshRenderData> RenderData;
 

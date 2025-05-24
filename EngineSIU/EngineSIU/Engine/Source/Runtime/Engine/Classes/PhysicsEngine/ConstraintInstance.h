@@ -1,6 +1,8 @@
 #pragma once
+#include "BodyInstance.h"
 #include "ConstraintTypes.h"
 #include "PhysScene.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "HAL/PlatformType.h"
 #include "Math/Vector.h"
 #include "UObject/NameTypes.h"
@@ -39,24 +41,29 @@ struct FConstraintInstanceBase
     FPhysScene* PhysScene;
 };
 
-
+/* 실제 시뮬레이션에 사용되는 물리 엔진 레벨의 Constraint 데이터
+ * 런타임에 UPhysicsConstraintTemplate의 DefaultInstance로부터 복사되어 생성
+ */
 struct FConstraintInstance : public FConstraintInstanceBase
 {
 public:
     FConstraintInstance();
+    void CopyConstraintParamsFrom(const FConstraintInstance* FromInstance);
+    
 
     const FName& GetChildBoneName() const;
     const FName& GetParentBoneName() const;
 
     float GetLinearLimit() const;
+    void UpdateLinearLimit();
+    void UpdateAngularLimit();
+    void InitConstraint(FBodyInstance* Body1, FBodyInstance* Body2, float Scale, USkeletalMeshComponent* OwningComponent);
 
 
     FName JointName;
     FName ConstraintBone1;
     FName ConstraintBone2;
 
-    void UpdateLinearLimit();
-    void UpdateAngularLimit();
     
 private:
     float LastKnownScale; // 초기화 당시 컴포넌트의 Scale
@@ -79,7 +86,7 @@ public:
     FVector PriAxis2;
     FVector SecAxis2;
 
-    /* Bone의 Local Z가 아닌 방향으로 twist를 제한하거나 */
+    /* Bone의 Local X가 아닌 방향으로 twist를 제한하거나 */
     FRotator AngularRotationOffset;
     uint32 bScaleLinearLimits : 1;
 

@@ -1,5 +1,7 @@
 #include "ConstraintInstance.h"
 
+#include "UserInterface/Console.h"
+
 FConstraintProfileProperties::FConstraintProfileProperties()
     : bDisableCollision(true) // 관절 사이의 충돌 기본적으로 비활성화
 {
@@ -34,6 +36,14 @@ void FConstraintInstance::UpdateAngularLimit()
 {
 }
 
+/*
+ * 여기서 모든 PhysX 엔진의 Constraint 인스턴스 생성
+ */
+void FConstraintInstance::InitConstraint(FBodyInstance* Body1, FBodyInstance* Body2, float Scale, USkeletalMeshComponent* OwningComponent)
+{
+
+}
+
 
 /** Constructor **/
 FConstraintInstance::FConstraintInstance()
@@ -50,6 +60,15 @@ FConstraintInstance::FConstraintInstance()
     Pos2 = FVector(0.0f, 0.0f, 0.0f);
     PriAxis2 = FVector(1.0f, 0.0f, 0.0f);
     SecAxis2 = FVector(0.0f, 1.0f, 0.0f);
+}
+
+void FConstraintInstance::CopyConstraintParamsFrom(const FConstraintInstance* FromInstance)
+{
+    if (FromInstance->PhysScene == nullptr)
+    {
+        UE_LOG(ELogLevel::Error, TEXT("FConstraintInst::CopyConstraintParamsFrom() : PhysScene is NULLPTR"));
+    }
+    *this = *FromInstance;
 }
 
 const FName& FConstraintInstance::GetChildBoneName() const

@@ -84,6 +84,7 @@ public:
     void CheckOverlap(const UPrimitiveComponent* Component, TArray<FOverlapResult>& OutOverlaps) const;
 
     void SetPhysicsScene(FPhysScene* InScene);
+    FPhysScene* GetPhysicsScene() const { return PhysicsScene; }
 
 public:
     double TimeSeconds;
