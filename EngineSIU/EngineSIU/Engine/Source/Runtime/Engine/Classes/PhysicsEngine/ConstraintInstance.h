@@ -7,6 +7,22 @@
 #include "Math/Vector.h"
 #include "UObject/NameTypes.h"
 
+enum class EConstraintTransformComponentFlags : uint8
+{
+    None = 0,
+
+    ChildPosition = 1 << 0,
+    ChildRotation = 1 << 1,
+    ParentPosition = 1 << 2,
+    ParentRotation = 1 << 3,
+
+    AllChild = ChildPosition | ChildRotation,
+    AllParent = ParentPosition | ParentRotation,
+    AllPosition = ChildPosition | ParentPosition,
+    AllRotation = ChildRotation | ParentRotation,
+    All = AllChild | AllParent
+};
+
 struct FConstraintProfileProperties
 {
     FConstraintProfileProperties();
@@ -49,7 +65,9 @@ struct FConstraintInstance : public FConstraintInstanceBase
 public:
     FConstraintInstance();
     void CopyConstraintParamsFrom(const FConstraintInstance* FromInstance);
-    
+    void SetRefPosition(EConstraintFrame::Type Frame, const FVector& Position);
+    void SetRefOrientation(EConstraintFrame::Type Frame, const FVector& InPriAxis, const FVector& InSecAxis);
+
 
     const FName& GetChildBoneName() const;
     const FName& GetParentBoneName() const;
@@ -58,6 +76,9 @@ public:
     void UpdateLinearLimit();
     void UpdateAngularLimit();
     void InitConstraint(FBodyInstance* Body1, FBodyInstance* Body2, float Scale, USkeletalMeshComponent* OwningComponent);
+    FTransform CalculateDefaultChildTransform() const;
+    FTransform CalculateDefaultParentTransform(const UPhysicsAsset* PhysicsAsset) const;
+    void SnapTransformsToDefault(const EConstraintTransformComponentFlags SnapFlags, const UPhysicsAsset* const PhysicsAsset);
 
 
     FName JointName;

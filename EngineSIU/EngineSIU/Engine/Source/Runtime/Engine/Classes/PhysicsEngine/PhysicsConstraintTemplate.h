@@ -10,7 +10,7 @@ class UPhysicsConstraintTemplate : public UObject
     DECLARE_CLASS(UPhysicsConstraintTemplate, UObject)
 public:
     UPhysicsConstraintTemplate() = default;
-
+    void SetDefaultProfile(FConstraintInstance& CI);
     virtual void Serialize(FArchive& Ar) override;
 
 

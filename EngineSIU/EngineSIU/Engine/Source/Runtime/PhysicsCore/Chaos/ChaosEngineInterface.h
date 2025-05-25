@@ -19,3 +19,12 @@ enum EAngularConstraintMotion
     ACM_Locked,
     ACM_MAX
 };
+
+namespace EConstraintFrame
+{
+    enum Type : int
+    {
+        Frame1,
+        Frame2
+    };
+}

@@ -28,10 +28,17 @@ struct FLinearConstraint : public FConstraintBaseParams
     
     float Limit; /* 하나의 값으로 3개 축 각각에 동일하게 적용되는 거리 제한 값 */
 
+    /* 기본 값 LCM_Locked : 위치 이동이 기본적으로 고정 (절대 움직이지 마라) */
     ELinearConstraintMotion XMotion;
     ELinearConstraintMotion YMotion;
     ELinearConstraintMotion ZMotion;
 };
+
+/*
+ *  회전에 대한 제약 조건 구조체
+ *  ACM_Free : 회전을 기본적으로 허용, 제한은 사용자가 정하는 것
+ *
+ */
 
 /* Swing1(Y축), Swing2(X축) 제한을 적용 (축은 회전 가능) */
 struct FConeConstraint : public FConstraintBaseParams

@@ -1,10 +1,9 @@
 #pragma once
 #include "Container/Array.h"
-
-struct FKBoxElem;
-struct FKSphereElem;
-struct FKSphylElem;
-struct FKConvexElem;
+#include "SphereElem.h"
+#include "BoxElem.h"
+#include "SphylElem.h"
+#include "ConvexElem.h"
 
 struct FKAggregateGeom
 {

@@ -1,6 +1,36 @@
 #include "PhysicsAsset.h"
 
+#include "BodySetup.h"
 #include "PhysicsConstraintTemplate.h"
+
+void UPhysicsAsset::UpdateBodySetupIndexMap()
+{
+    // update BodySetupIndexMap
+    BodySetupIndexMap.Empty();
+
+    for (int32 i = 0; i < BodySetup.Num(); i++)
+    {
+        if (BodySetup[i])
+        {
+            BodySetupIndexMap.Add(BodySetup[i]->BoneName, i);
+        }
+    }
+}
+
+void UPhysicsAsset::UpdateBoundsBodiesArray()
+{
+    // Update the bounds bodies array based on the current body setups
+    BoundsBodies.Empty();
+
+    for (int32 i = 0; i < BodySetup.Num(); i++)
+    {
+        if (BodySetup[i]&& BodySetup[i]->bConsiderForBounds)
+        {
+            BoundsBodies.Add(i);
+        }
+    }
+}
+
 
 const TArray<FName>& UPhysicsAsset::GetConstraintProfileNames() const
 {

@@ -14,6 +14,18 @@ struct FKBoxElem : public FKShapeElem
 
     }
 
+    FTransform GetTransform() const
+    {
+        return FTransform(Rotation, Center);
+    };
+
+
+    void SetTransform(const FTransform& InTransform)
+    {
+        Rotation = InTransform.Rotator();
+        Center = InTransform.GetTranslation();
+    }
+
     FQuat Orientation_DEPRECATED;
 
     FVector Center;
