@@ -20,6 +20,7 @@ enum EAngularConstraintMotion
     ACM_MAX
 };
 
+/* Frame1과 Frame2 : 각각 자식 본과 부모 본의 Constraint 좌표계 */
 namespace EConstraintFrame
 {
     enum Type : int

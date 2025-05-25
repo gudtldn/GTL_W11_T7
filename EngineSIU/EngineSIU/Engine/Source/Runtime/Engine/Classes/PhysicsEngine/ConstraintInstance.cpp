@@ -122,7 +122,8 @@ FTransform FConstraintInstance::CalculateDefaultParentTransform(const UPhysicsAs
 }
 
 /*
- * 자식과 부모 Bone 사이의 올바른 위치와 방향 = 축을 자동으로 정렬하는 함수
+ * 두 Bone 간의 Constraint가 틀어지지 않도록
+ * 자식과 부모 Bone의 위치 및 회전 좌표계를 맞추기 위해 축 / 위치 보정 수행
  */
 void FConstraintInstance::SnapTransformsToDefault(const EConstraintTransformComponentFlags SnapFlags, const UPhysicsAsset* const PhysicsAsset)
 {
@@ -176,9 +177,10 @@ void FConstraintInstance::CopyConstraintParamsFrom(const FConstraintInstance* Fr
     *this = *FromInstance;
 }
 
-/* 내 생각 - 위치 저장만 수행 : 이 후 물리엔진에서 이 값으로 Constraint Frame을 구성하면 됩니다 */
+/* Constraint가 작동할 때 기준이 되는 두 개체의 위치 기준점(로컬 좌표계 상 위치) 지정 */
 void FConstraintInstance::SetRefPosition(EConstraintFrame::Type Frame, const FVector& Position)
 {
+    /* Frame1 : 자식 본에 대한 위치 <-> Frame2 */
     if (Frame == EConstraintFrame::Frame1)
     {
         Pos1 = Position;
@@ -189,7 +191,10 @@ void FConstraintInstance::SetRefPosition(EConstraintFrame::Type Frame, const FVe
     }
 }
 
-/* Constraint 축 정렬 및 직교화 보정 */
+/* Frame1 또는 Frame2의 참조 방향(Orientation) 설정
+ * Primary 축과 Secondary 축을 지정하여 회전 방향을 정의
+ * Primary 축은 Twist 방향, Secondary 축은 Swing 방향으로 사용됨
+ */
 void FConstraintInstance::SetRefOrientation(EConstraintFrame::Type Frame, const FVector& InPriAxis, const FVector& InSecAxis)
 {
     // 정규화된 축을 사용
