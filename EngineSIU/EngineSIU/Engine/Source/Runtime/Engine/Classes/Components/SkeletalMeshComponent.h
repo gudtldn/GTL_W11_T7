@@ -115,6 +115,8 @@ public:
     /* BodyInstance 생성 함수 */ 
     void InstantiatePhysicsAssetBodies_Internal(const UPhysicsAsset& PhysAsset, TArray<FBodyInstance*>& OutBodies, TMap<FName, FBodyInstance*>* OutNameToBodyMap, FPhysScene* PhysScene /*= nullptr*/, USkeletalMeshComponent* OwningComponent /*= nullptr*/, int32 UseRootBodyIndex /*= INDEX_NONE*/)const;
 
+    //private로 옮겨야 함
+    FPoseContext BonePoseContext;
 protected:
     bool NeedToSpawnAnimScriptInstance() const;
 

@@ -1717,6 +1717,8 @@
     <ClCompile Include="Engine\Source\Developer\PhysicsUtilities\PhysicAssetUtils.cpp" />
     <ClCompile Include="Engine\Source\Runtime\PhysicsCore\PhysicalMaterials\PhysicalMaterial.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\PhysicsEngine\BodySetup.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Windows\SubWindow\PhysicsSubEngine.cpp" />
+    <ClCompile Include="Engine\Source\Editor\PropertyEditor\SubEditor\PhysicsViewerPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="EngineSIU.natvis" />
@@ -1850,6 +1852,8 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\PhysicsEngine\SphylElem.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\PhysicsEngine\ConvexElem.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Misc\EnumClassFlags.h" />
+    <ClInclude Include="Engine\Source\Runtime\Windows\SubWindow\PhysicsSubEngine.h" />
+    <ClInclude Include="Engine\Source\Editor\PropertyEditor\SubEditor\PhysicsViewerPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\CompositingShader.hlsl" />
